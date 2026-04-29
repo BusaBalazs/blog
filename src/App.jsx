@@ -1,14 +1,19 @@
-import { useState } from 'react'
+import Navbar from "./components/Navbar";
+import Hero from "./sections/Hero";
+import Posts from "./sections/Posts";
+import Videos from "./sections/Videos";
+import Footer from "./sections/Footer";
 
-import LandingPage from './LandingPage.jsx';
 function App() {
-
-
   return (
     <>
-      <LandingPage />
+      <Navbar />
+      <Hero />
+      <Posts />
+      <Videos />
+      <Footer />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
