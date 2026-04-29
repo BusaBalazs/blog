@@ -12,16 +12,90 @@
   color: inherit;
 }
 
-
 :root {
   letter-spacing: 0.18px;
-
+  --display: "Playfair Display", serif;
+  --body: "Open Sans", serif;
   color: var(--text);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
 
+/* Gold gradient bar at very top of page */
+body::before {
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(to right, #a37a09, #ffff83);
+  z-index: 9999;
+}
 
+/* Line clamp utility */
+.line-clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.default-color {
+  color: #2f2d2d;
+}
+
+.bg-gold {
+  background-color: #bda972;
+  color: rgb(17, 17, 17);
+}
+
+.bg-lemon {
+  background-color: #ede56b;
+  color: #2f2d2d;
+}
+
+.bg-light {
+  background-color: #e9e9e9;
+}
+
+/****************************************
+****************************************/
+.logo::after {
+  content: "";
+  display: block;
+  width: 140px;
+  height: 8px;
+  position: absolute;
+  bottom: -1px;
+  opacity: .5;
+  left: calc(50% - 70px);
+  border-radius: 25px;
+  background-color: #bda972;
+}
+
+@media (max-width: 767px) {
+  .logo::after {
+    width: 100px;
+    bottom: 1px;
+    left: calc(50% - 50px);
+  }
+}
+
+/****************************************
+****************************************/
+.featured-img::after {
+  content: "";
+  display: block;
+  width: 100%;
+  aspect-ratio: 510/390;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border-radius: 6px;
+  border: solid 3px #ede56b;
 }
