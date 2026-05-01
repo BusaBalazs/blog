@@ -1,12 +1,36 @@
 import { useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
-
+import { Link } from "react-router-dom";
+//---------------------------------------------------------------
 const NAV_ITEMS = [
-  { label: "Főoldal", href: "#" },
-  { label: "Bejegyzések", href: "#", hasDropdown: true },
-  { label: "Bemutatkozás", href: "#" },
+  { label: "Főoldal", href: "/" },
+  {
+    label: "Bejegyzések",
+    categoris: [
+      {
+        categori: "Életmód",
+        href: "/posts/eletmod",
+      },
+      {
+        categori: "Egészség",
+        href: "/posts/egeszseg",
+      },
+      {
+        categori: "Kapcsolatok",
+        href: "/posts/kapcsolat",
+      },
+      {
+        categori: "Szépség",
+        href: "/posts/szepseg",
+      },
+    ],
+    hasDropdown: true,
+  },
+  { label: "Bemutatkozás", href: "/about" },
 ];
 
+//---------------------------------------------------------------
+//---------------------------------------------------------------
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -16,9 +40,12 @@ export default function Navbar() {
       <div className="max-w-[1200px] mx-auto px-4 sm:px-4 lg:px-3">
         <header className="flex items-center justify-between pt-9 pb-4">
           {/* Logo */}
-          <a href="#" className="logo relative md:text-[2rem] text-2xl font-display font-bold text-gray-900 tracking-wide">
+          <Link
+            to={"/"}
+            className="logo relative md:text-[2rem] text-2xl font-display font-bold text-gray-900 tracking-wide"
+          >
             Változó Kor
-          </a>
+          </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
@@ -34,27 +61,27 @@ export default function Navbar() {
                   </button>
                   {dropdownOpen && (
                     <div className="absolute top-full mt-2 left-0 bg-white shadow-lg rounded border border-gray-100 min-w-[160px] py-1 z-50">
-                      {["Életmód", "Egészség", "Kapcsolatok", "Szépség"].map((cat) => (
-                        <a
-                          key={cat}
-                          href="#"
+                      {item.categoris.map((cat) => (
+                        <Link
+                          key={cat.categori}
+                          to={cat.href}
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#f0efed] transition-colors"
                         >
-                          {cat}
-                        </a>
+                          {cat.categori}
+                        </Link>
                       ))}
                     </div>
                   )}
                 </div>
               ) : (
-                <a
+                <Link
                   key={item.label}
-                  href={item.href}
+                  to={item.href}
                   className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
                 >
                   {item.label}
-                </a>
-              )
+                </Link>
+              ),
             )}
             <a
               href="#"
