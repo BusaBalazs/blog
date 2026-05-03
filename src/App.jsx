@@ -1,12 +1,14 @@
 import { useState } from "react";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { PostsProvider } from "./data/Postcontext";
 
 import Root from "./pages/Root";
 import LandingPage from "./pages/LandingPage";
 import AboutPage from "./pages/AboutPage";
 import Posts from "./components/Posts";
-
+import ArticlePage from "./pages/ArticlePage";
+import AdminPage from "./pages/AdminPage";
 
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------
@@ -18,23 +20,32 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <LandingPage />
+        element: <LandingPage />,
       },
       {
         path: "/about",
-        element: <AboutPage />
+        element: <AboutPage />,
       },
       {
-        path: "/posts/:id",
-        element: <Posts />
-      }
-    ]
-  }
-
-])
+        path: "/posts/:category",
+        element: <Posts />,
+      },
+      {
+        path: "/article/:id",
+        element: <ArticlePage />,
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    element: <AdminPage />,
+  },
+]);
 //------------------------------------------------------------------
 export default function App() {
   return (
-    <RouterProvider router={router} />
+    <PostsProvider>
+      <RouterProvider router={router} />
+    </PostsProvider>
   );
 }

@@ -1,52 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-// ---------- MOCK DATA (replace with Firebase fetching) ----------
-const MOCK_POSTS = [
-  {
-    id: "1",
-    category: "Életmód",
-    date: "2026. 04. 26.",
-    title: "Lorem ipsum dolores",
-    excerpt:
-      "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=600&q=80",
-    featured: true,
-  },
-  {
-    id: "2",
-    category: "Életmód",
-    date: "2026. 04. 26.",
-    title: "Lorem ipsum dolores",
-    excerpt:
-      "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&q=80",
-    featured: false,
-  },
-  {
-    id: "3",
-    category: "Egészség",
-    date: "2026. 04. 26.",
-    title: "Lorem ipsum dolores",
-    excerpt:
-      "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. nisi ut aliquip ex ea commodo consequat.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80",
-    featured: false,
-  },
-  {
-    id: "4",
-    category: "Életmód",
-    date: "2026. 04. 26.",
-    title: "Lorem ipsum dolores",
-    excerpt:
-      "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80",
-    featured: false,
-  },
-];
+
+import { usePosts } from "../data/Postcontext";
 
 // ---------- Sub-components ----------
 
@@ -113,43 +68,44 @@ function SidePost({ post }) {
 // Mobile: single column card
 function MobilePost({ post }) {
   return (
-    <article className="cursor-pointer group">
-      <div className="overflow-hidden rounded-sm mb-3 aspect-[510/390]">
-        <img
-          src={post.imageUrl}
-          alt={post.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-      </div>
-      <PostMeta category={post.category} date={post.date} />
-      <h3 className="font-display text-lg font-bold text-gray-900 mb-1 group-hover:text-[#b8963e] transition-colors">
-        {post.title}
-      </h3>
-      <p className="text-sm text-gray-600 leading-relaxed">{post.excerpt}</p>
-    </article>
+    <Link to={`/article/${post.id}`}>
+      <article className="cursor-pointer group">
+        <div className="overflow-hidden rounded-sm mb-3 aspect-[510/390]">
+          <img
+            src={post.imageUrl}
+            alt={post.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+        <PostMeta category={post.category} date={post.date} />
+        <h3 className="font-display text-lg font-bold text-gray-900 mb-1 group-hover:text-[#b8963e] transition-colors">
+          {post.title}
+        </h3>
+        <p className="text-sm text-gray-600 leading-relaxed">{post.excerpt}</p>
+      </article>
+    </Link>
   );
 }
 
 //---------------------------------------------------------
 //---------------------------------------------------------
 // ---------- Main section ----------
-const Latest = ({ posts = MOCK_POSTS }) => {
-  /**
-   * Firebase integration:
-   * Replace MOCK_POSTS with a useEffect that fetches from Firestore:
-   *
-   * useEffect(() => {
-   *   const q = query(collection(db, "posts"), orderBy("date", "desc"), limit(4));
-   *   const unsub = onSnapshot(q, (snap) => {
-   *     setPosts(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-   *   });
-   *   return unsub;
-   * }, []);
-   */
+const Latest = () => {
+  const { getLatestPosts, getFeaturedPost, getLatestVideos, loading } =
+    usePosts();
+  /*
+  useEffect(() => {
+    const q = query(collection(db, "posts"), orderBy("date", "desc"), limit(4));
+    const unsub = onSnapshot(q, (snap) => {
+      setPosts(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    });
+    console.log(unsub);
+    return unsub;
+  }, []);*/
 
-  const featured = posts.find((p) => p.featured);
-  const sidePosts = posts.filter((p) => !p.featured);
-
+  const posts = getLatestPosts(4); // top 4 cikk, sorted by createdAt descending
+  const featured = posts[0]; // latest post
+  const sidePosts = posts.slice(1); // remaining posts
   return (
     <section className="bg-light  px-4 sm:px-6 lg:px-8 md:pb-14">
       <div className="max-w-[1200px]  mx-auto">

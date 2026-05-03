@@ -8,7 +8,7 @@ const Posts = () => {
   return (
     <>
     <div>Posts</div>
-    <h2>{params.id}</h2>
+    <h2>{params.category}</h2>
     </>
   )
 }
