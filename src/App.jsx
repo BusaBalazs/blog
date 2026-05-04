@@ -6,7 +6,7 @@ import { PostsProvider } from "./data/Postcontext";
 import Root from "./pages/Root";
 import LandingPage from "./pages/LandingPage";
 import AboutPage from "./pages/AboutPage";
-import Posts from "./components/Posts";
+import PostPage from "./pages/PostPage";
 import ArticlePage from "./pages/ArticlePage";
 import AdminPage from "./pages/AdminPage";
 
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/posts/:category",
-        element: <Posts />,
+        element: <PostPage />,
       },
       {
         path: "/article/:id",

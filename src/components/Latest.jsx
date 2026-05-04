@@ -13,15 +13,13 @@ import MobilePost from "./utility/MobilePost";
 //---------------------------------------------------------
 // ---------- Main section ----------
 const Latest = () => {
-  const { getLatestPosts, loading } =
-    usePosts();
+  const { getLatestPosts, loading } = usePosts();
 
-    //----------------------------------------------------
+  //----------------------------------------------------
   const posts = getLatestPosts(4); // top 4 cikk, sorted by createdAt descending
+  const featured = posts[0] ?? null;
+  const sidePosts = posts.slice(1);
 
-  const featured = posts[0]; // latest post
-  const sidePosts = posts.slice(1); // remaining posts
-console.log(loading)
   //----------------------------------------------------
   return (
     <section className="bg-light  px-4 sm:px-6 lg:px-8 pb-12">

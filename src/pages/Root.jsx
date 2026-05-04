@@ -9,12 +9,16 @@ import FooterSubscribe from "../components/FooterSubscribe";
 const Root = () => {
   return (
     <>
-      <main>
-        <Navbar />
-        <Outlet />
-        <FooterSubscribe />
-      </main>
-      <Footer />
+      <div className="h-screen flex flex-col justify-between">
+        <main>
+          <Navbar />
+          <Outlet />
+        </main>
+        <div>
+          <FooterSubscribe />
+          <Footer />
+        </div>
+      </div>
     </>
   );
 };

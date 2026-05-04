@@ -70,9 +70,15 @@ export function PostsProvider({ children }) {
   }, []);
 
   // ─── Derived helpers — számítás, nem újabb DB hívás ───────
-  const getFeaturedPost = () => posts.find((p) => p.featured) ?? posts[0] ?? null;
+  const getLatestPosts = (limit = 4) => {
+    const normalizeDate = (post) => {
+      return post.date ? new Date(post.date).getTime() : 0;
+    };
 
-  const getLatestPosts = (limit = 4) => posts.slice(0, limit);
+    return [...posts]
+      .sort((a, b) => normalizeDate(b) - normalizeDate(a))
+      .slice(0, limit);
+  };
 
   const getPostsByCategory = (categorySlug) =>
     posts.filter(
@@ -95,7 +101,6 @@ export function PostsProvider({ children }) {
         loading,
         error,
         // helpers
-        getFeaturedPost,
         getLatestPosts,
         getPostsByCategory,
         getPostById,
