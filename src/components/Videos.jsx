@@ -114,7 +114,8 @@ const Videos = ({ videos = MOCK_VIDEOS }) => {
         {/* "All videos" link */}
         <div className="flex justify-end mt-8">
           <a
-            href="#"
+            href="https://www.youtube.com/"
+            target="_blank"
             className="flex items-center gap-2 text-sm text-gray-700 hover:text-[#b8963e] font-medium transition-colors group"
           >
             Összes Videó

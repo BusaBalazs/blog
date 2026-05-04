@@ -32,7 +32,7 @@ body::before {
   top: 0;
   left: 0;
   right: 0;
-  height: 20px;
+  height: 15px;
   background: linear-gradient(to right, #a37a09, #ffff83);
   z-index: 9999;
 }

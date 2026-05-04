@@ -97,11 +97,11 @@ function PreviewCard({ form }) {
   return (
     <article className="font-body">
       {form.imageUrl && (
-        <div className="overflow-hidden rounded-sm mb-4 border-b-2 border-[#d4af37]">
+        <div className="overflow-hidden rounded-sm mb-4 aspect-[510/390]">
           <img
             src={form.imageUrl}
             alt={form.title}
-            className="w-full h-40 object-cover"
+            className="block w-full h-full object-cover"
             onError={(e) => {
               e.target.style.display = "none";
             }}

@@ -7,7 +7,7 @@ const Article = () => {
   const { posts, loading } = usePosts();
   const params = useParams();
   const article = posts.find((item) => item.id === params.id);
-  console.log(article);
+
   return (
     <section>
       <div>Article</div>

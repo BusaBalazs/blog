@@ -39,7 +39,7 @@ function XIcon() {
 export default function Footer() {
   return (
     <>
-      <footer className="bg-[#3a3a3a] text-white pb-5 pt-20">
+      <footer className="bg-[#3a3a3a] text-white pb-5 sm:pt-20 pt-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Social icons */}
@@ -90,7 +90,7 @@ export default function Footer() {
           </div>
         </div>
       </footer>
-      <div className="w-full h-5 bg-gradient-to-r from-[#a37a09] to-[#ffff83]"></div>
+      <div className="w-full h-4 bg-gradient-to-r from-[#a37a09] to-[#ffff83]"></div>
     </>
   );
 }
