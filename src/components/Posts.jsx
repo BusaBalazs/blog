@@ -40,7 +40,7 @@ const Posts = () => {
         </div>
 
         {/* Mobile layout: stacked cards */}
-        <div className="md:hidden flex flex-col gap-8 ">
+        <div className="md:hidden flex flex-col gap-8 md:mt-0 mt-8">
           {posts.map((post) => (
             <MobilePost key={post.id} post={post} />
           ))}

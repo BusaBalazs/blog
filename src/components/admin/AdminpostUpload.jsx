@@ -143,11 +143,11 @@ function PreviewCard({ form }) {
   return (
     <article className="font-body">
       {form.imageUrl && (
-        <div className="overflow-hidden rounded-sm mb-4 border-b-2 border-[#d4af37]">
+        <div className="overflow-hidden rounded-sm mb-4 border-b-2 border-[#d4af37] aspect-[510/390]">
           <img
             src={form.imageUrl}
             alt={form.title}
-            className="w-full h-40 object-cover"
+            className="w-full h-full object-cover "
             onError={(e) => {
               e.target.style.display = "none";
             }}
@@ -273,7 +273,14 @@ const AdminpostUpload = () => {
           href="/"
           className="text-xs text-gray-500 hover:text-[#b8963e] transition-colors underline underline-offset-2"
         >
-          ← Vissza a főoldalra
+          ← Ugrás a blogra
+        </a>
+        <a
+          href="/admin"
+          className="text-xs text-gray-500 hover:text-[#b8963e] transition-colors underline underline-offset-2"
+          target="_blank"
+        >
+          ← Vissza
         </a>
       </header>
 
@@ -399,14 +406,7 @@ const AdminpostUpload = () => {
                     {form.title.length}/120
                   </span>
                 </div>
-                {form.title && (
-                  <p className="mt-1 text-xs text-gray-400">
-                    Slug:{" "}
-                    <span className="font-mono text-[#b8963e]">
-                      /cikk/{slugify(form.title)}
-                    </span>
-                  </p>
-                )}
+              
               </div>
             </div>
 
@@ -454,6 +454,7 @@ const AdminpostUpload = () => {
                 <h2 className="font-display font-bold text-gray-800">
                   Cikk szövege
                 </h2>
+
                 {/* Szintaxis segítség */}
                 <div className="flex items-center gap-3 text-xs text-gray-400">
                   <span className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">
@@ -574,26 +575,6 @@ const AdminpostUpload = () => {
                 <PreviewCard form={form} />
               </div>
 
-              {/* Firestore struktúra */}
-              <div className="bg-gray-800 rounded-sm p-4">
-                <p className="text-xs text-gray-400 uppercase tracking-widest mb-3">
-                  Firestore mező struktúra
-                </p>
-                <pre className="text-xs text-green-400 leading-relaxed overflow-x-auto">
-                  {`posts/{auto-id} {
-  category: "${form.category || "…"}",
-  date: "${form.date}",
-  title: "${form.title ? form.title.slice(0, 20) + (form.title.length > 20 ? "…" : "") : "…"}",
-  excerpt: "…",
-  imageUrl: "…",
-  featured: ${form.featured},
-  article: "…",
-  slug: "${slugify(form.title) || "…"}",
-  createdAt: Timestamp
-}`}
-                </pre>
-              </div>
-
               {/* Szintaxis referencia */}
               <div className="bg-white rounded-sm border border-gray-100 p-4">
                 <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
@@ -616,16 +597,12 @@ const AdminpostUpload = () => {
                     </code>
                     <span className="text-gray-500">
                       →{" "}
-                      <span className="text-[#b8963e] font-medium">Alcím</span>{" "}
-                      (arany)
+                      <span className="text-gray-800 font-medium">
+                        Alcím
+                      </span>{" "}
                     </span>
                   </div>
-                  <div className="flex gap-2 items-start">
-                    <code className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 shrink-0">
-                      üres sor
-                    </code>
-                    <span className="text-gray-500">→ új bekezdés</span>
-                  </div>
+
                   <div className="flex gap-2 items-start">
                     <code className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 shrink-0">
                       sima szöveg

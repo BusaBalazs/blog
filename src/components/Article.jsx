@@ -47,18 +47,18 @@ function ArticleBody({ text }) {
           return (
             <h2
               key={i}
-              className="font-display font-bold text-gray-900 text-lg mt-8 mb-2"
+              className="font-display font-bold text-gray-900 text-xl mt-8 mb-2"
             >
               {block.replace(/^## /, "")}
             </h2>
           );
         }
-        // # Heading támogatás
+        // # subtitle támogatás
         if (block.startsWith("# ")) {
           return (
             <h2
               key={i}
-              className="font-display font-bold text-gray-900 text-xl mt-8 mb-2"
+              className="font-display font-bold text-gray-900 text-lg mt-8 mb-2"
             >
               {block.replace(/^# /, "")}
             </h2>
@@ -181,7 +181,7 @@ const Article = () => {
         {/* ── CIKK TÖRZS ── */}
         <section className="w-full bg-[#f0efed] ">
           {/* Alcím */}
-          <div className="max-w-5xl mx-auto pb-4 pt-32 px-12">
+          <div className="max-w-5xl mx-auto pb-4 lg:pt-32 pt-8 px-12">
             {post.subtitle && (
               <div className="mb-6">
                 <h2 className="font-display font-bold text-gray-900 text-lg mb-3">

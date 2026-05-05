@@ -123,15 +123,15 @@ export default function Navbar() {
                   <ChevronDown size={14} />
                 </button>
                 {mobileDropdownOpen &&
-                  item.categoris.map((cat) => (
-                    <a
-                      key={cat.categori}
-                      href={cat.href}
+                  categories.map((cat) => (
+                    <Link
+                      key={cat}
+                      to={`/posts/${slugify(cat)}`}
                       className="text-sm text-gray-700 hover:text-gray-900 pl-4"
                       onClick={() => setMenuOpen(false)}
                     >
-                      {cat.categori}
-                    </a>
+                      {cat}
+                    </Link>
                   ))}
               </div>
             ) : (
