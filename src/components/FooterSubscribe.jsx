@@ -13,7 +13,7 @@ const FooterSubscribe = () => {
 
   return (
     <section className="bg-gray-50 pt-5 md:py-8 px-4 sm:block hidden">
-      <div className="bg-white max-w-xl mx-auto rounded-lg shadow-lg px-8 py-8 text-center relative top-[60px] z-50  ">
+      <div className="bg-white max-w-xl mx-auto rounded-lg shadow-lg px-8 py-8 text-center relative top-[60px] z-10  ">
         <p className="text-sm text-gray-600 mb-5">
           Iratkozz fel, hogy ne maradj le semmiről!
         </p>

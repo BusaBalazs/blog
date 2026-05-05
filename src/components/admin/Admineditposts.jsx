@@ -1,0 +1,727 @@
+import React, { useState } from "react";
+import { doc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
+import { ref, deleteObject } from "firebase/storage";
+import { db, storage } from "../../data/firebase";
+import { slugify, usePosts } from "../../data/Postcontext";
+
+import Imageuploader from "./Imageuploader";
+
+// ── Konstansok ────────────────────────────────────────────
+const CATEGORIES = [
+  "Életmód",
+  "Egészség",
+  "Kapcsolatok",
+  "Szépség",
+  "Pszichológia",
+  "Karrier",
+];
+
+// ── Segéd komponensek ─────────────────────────────────────
+function Label({ htmlFor, children, required }) {
+  return (
+    <label
+      htmlFor={htmlFor}
+      className="block text-xs font-semibold uppercase tracking-widest text-gray-500 mb-1.5"
+    >
+      {children}
+      {required && <span className="text-[#d4af37] ml-1">*</span>}
+    </label>
+  );
+}
+
+function Input({ id, className = "", ...props }) {
+  return (
+    <input
+      id={id}
+      className={`w-full bg-white border border-gray-200 rounded-sm px-4 py-2.5 text-sm text-gray-800
+        placeholder:text-gray-300 focus:outline-none focus:border-[#d4af37] focus:ring-1
+        focus:ring-[#d4af37]/30 transition-all ${className}`}
+      {...props}
+    />
+  );
+}
+
+function Textarea({ id, className = "", ...props }) {
+  return (
+    <textarea
+      id={id}
+      className={`w-full bg-white border border-gray-200 rounded-sm px-4 py-2.5 text-sm text-gray-800
+        placeholder:text-gray-300 focus:outline-none focus:border-[#d4af37] focus:ring-1
+        focus:ring-[#d4af37]/30 transition-all resize-none ${className}`}
+      {...props}
+    />
+  );
+}
+
+function FieldError({ msg }) {
+  if (!msg) return null;
+  return <p className="mt-1 text-xs text-red-500">{msg}</p>;
+}
+
+function StatusBanner({ status, onClose }) {
+  if (!status) return null;
+  const isSuccess = status.type === "success";
+  return (
+    <div
+      className={`flex items-center justify-between gap-3 px-5 py-4 rounded-sm text-sm font-medium mb-6 border
+        ${
+          isSuccess
+            ? "bg-green-50 border-green-200 text-green-800"
+            : "bg-red-50 border-red-200 text-red-800"
+        }`}
+    >
+      <span className="flex items-center gap-2">
+        <span className="text-lg">{isSuccess ? "✓" : "✕"}</span>
+        {status.message}
+      </span>
+      <button
+        onClick={onClose}
+        className="text-lg leading-none opacity-50 hover:opacity-100"
+      >
+        ×
+      </button>
+    </div>
+  );
+}
+
+// ── Validáció ─────────────────────────────────────────────
+function validate(form) {
+  const errors = {};
+  if (!form.title?.trim()) errors.title = "A cím kötelező.";
+  if (!form.category) errors.category = "Válassz kategóriát.";
+  if (!form.excerpt?.trim()) errors.excerpt = "A kivonat kötelező.";
+  if (!form.article?.trim()) errors.article = "A cikk szövege kötelező.";
+  return errors;
+}
+
+// ── Cikk lista kártya ─────────────────────────────────────
+function PostListItem({ post, isSelected, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full text-left flex gap-4 p-4 rounded-sm border transition-all duration-150 group
+        ${
+          isSelected
+            ? "border-[#d4af37] bg-[#fdf8ec] shadow-sm"
+            : "border-gray-100 bg-white hover:border-[#d4af37]/50 hover:bg-[#fdf8ec]/50"
+        }`}
+    >
+      {/* Thumbnail */}
+      <div className="flex-shrink-0 w-16 h-16 rounded-sm overflow-hidden bg-gray-100">
+        {post.imageUrl ? (
+          <img
+            src={post.imageUrl}
+            alt={post.title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.style.display = "none";
+            }}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-300 text-xl">
+            📄
+          </div>
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-1 flex-wrap">
+          <span className="text-xs text-gray-400">{post.category}</span>
+          {post.featured && (
+            <span className="text-xs bg-[#d4af37] text-white px-1.5 py-0.5 rounded-sm font-semibold leading-none">
+              Kiemelt
+            </span>
+          )}
+        </div>
+        <p className="text-sm font-semibold text-gray-800 truncate leading-snug">
+          {post.title}
+        </p>
+        <p className="text-xs text-gray-400 mt-0.5 truncate">{post.excerpt}</p>
+      </div>
+
+      {/* Chevron */}
+      <div
+        className={`flex-shrink-0 self-center text-gray-300 transition-transform duration-150
+        ${isSelected ? "text-[#d4af37] translate-x-0.5" : "group-hover:translate-x-0.5"}`}
+      >
+        ›
+      </div>
+    </button>
+  );
+}
+
+// ── Cikk előnézet renderelő ───────────────────────────────
+function ArticlePreview({ article }) {
+  if (!article?.trim()) {
+    return (
+      <p className="text-gray-300 text-xs italic">
+        A cikk előnézete itt jelenik meg...
+      </p>
+    );
+  }
+  return (
+    <div className="space-y-2 text-xs leading-relaxed">
+      {article.split("\n").map((line, i) => {
+        if (line.startsWith("## "))
+          return (
+            <p
+              key={i}
+              className="font-display font-bold text-gray-900 text-sm pt-2"
+            >
+              {line.replace(/^## /, "")}
+            </p>
+          );
+        if (line.startsWith("# "))
+          return (
+            <p key={i} className="font-medium text-[#b8963e] pt-1">
+              {line.replace(/^# /, "")}
+            </p>
+          );
+        if (line.trim() === "") return <div key={i} className="h-1" />;
+        return (
+          <p key={i} className="text-gray-600">
+            {line}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Szerkesztő panel ──────────────────────────────────────
+function EditPanel({ post, onSaved, onDeleted }) {
+  const [form, setForm] = useState({ ...post });
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [articleTab, setArticleTab] = useState("editor");
+
+  const set = (field) => (e) => {
+    const val =
+      e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    setForm((prev) => ({ ...prev, [field]: val }));
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    const errs = validate(form);
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await updateDoc(doc(db, "posts", post.id), {
+        category: form.category,
+        date: form.date,
+        title: form.title.trim(),
+        excerpt: form.excerpt.trim(),
+        imageUrl: form.imageUrl?.trim() ?? "",
+        featured: form.featured,
+        article: form.article.trim(),
+        slug: slugify(form.title),
+        updatedAt: serverTimestamp(),
+      });
+      onSaved({
+        type: "success",
+        message: `"${form.title}" sikeresen frissítve!`,
+      });
+    } catch (err) {
+      onSaved({ type: "error", message: `Hiba: ${err.message}` });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm(`Biztosan törlöd a "${post.title}" cikket? Ez nem vonható vissza!`)) {
+      return;
+    }
+
+    setDeleting(true);
+    try {
+      // Kép törlése a Storage-ből
+      if (post.imageUrl) {
+        try {
+          const imageRef = ref(storage, post.imageUrl);
+          await deleteObject(imageRef);
+        } catch (err) {
+          console.warn("Kép törlési hiba (nem kritikus):", err);
+        }
+      }
+
+      // Cikk törlése az adatbázisból
+      await deleteDoc(doc(db, "posts", post.id));
+
+      onSaved({
+        type: "success",
+        message: `"${post.title}" sikeresen törölve!`,
+      });
+      onDeleted?.(post.id);
+    } catch (err) {
+      onSaved({ type: "error", message: `Törlési hiba: ${err.message}` });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  // Ha post változik (másik cikk kiválasztva), reseteljük a formot
+  // useEffect-tel kezeljük a szülőben (key prop)
+
+  return (
+    <form onSubmit={handleSave} noValidate className="space-y-5">
+      {/* Alapadatok */}
+      <div className="bg-white rounded-sm border border-gray-100 p-5">
+        <h3 className="font-display font-bold text-gray-700 text-sm mb-4 pb-3 border-b border-gray-100 uppercase tracking-wider">
+          Alapadatok
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="edit-category" required>
+              Kategória
+            </Label>
+            <select
+              id="edit-category"
+              value={form.category}
+              onChange={set("category")}
+              className="w-full bg-white border border-gray-200 rounded-sm px-4 py-2.5 text-sm
+                text-gray-800 focus:outline-none focus:border-[#d4af37] focus:ring-1
+                focus:ring-[#d4af37]/30 transition-all"
+            >
+              <option value="">Válassz...</option>
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+            <FieldError msg={errors.category} />
+          </div>
+          <div>
+            <Label htmlFor="edit-date">Dátum</Label>
+            <Input
+              id="edit-date"
+              type="date"
+              value={form.date}
+              onChange={set("date")}
+            />
+          </div>
+        </div>
+
+        {/* Featured toggle */}
+        <div className="mt-4 flex items-center gap-3">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={form.featured}
+            onClick={() => setForm((p) => ({ ...p, featured: !p.featured }))}
+            className={`relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none
+              focus:ring-2 focus:ring-[#d4af37]/50
+              ${form.featured ? "bg-[#d4af37]" : "bg-gray-200"}`}
+          >
+            <span
+              className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow
+              transition-transform duration-200 ${form.featured ? "translate-x-5" : "translate-x-0"}`}
+            />
+          </button>
+          <span
+            className="text-sm text-gray-700 cursor-pointer select-none"
+            onClick={() => setForm((p) => ({ ...p, featured: !p.featured }))}
+          >
+            Kiemelt cikk
+          </span>
+        </div>
+      </div>
+
+      {/* Cím */}
+      <div className="bg-white rounded-sm border border-gray-100 p-5">
+        <h3 className="font-display font-bold text-gray-700 text-sm mb-4 pb-3 border-b border-gray-100 uppercase tracking-wider">
+          Cím
+        </h3>
+        <div>
+          <Label htmlFor="edit-title" required>
+            Cím
+          </Label>
+          <Input
+            id="edit-title"
+            type="text"
+            value={form.title}
+            onChange={set("title")}
+            maxLength={120}
+          />
+          <div className="flex justify-between mt-1">
+            <FieldError msg={errors.title} />
+            <span className="text-xs text-gray-300 ml-auto">
+              {form.title?.length ?? 0}/120
+            </span>
+          </div>
+          {form.title && (
+            <p className="mt-1 text-xs text-gray-400">
+              Slug:{" "}
+              <span className="font-mono text-[#b8963e]">
+                /cikk/{slugify(form.title)}
+              </span>
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Kép & Kivonat */}
+      <div className="bg-white rounded-sm border border-gray-100 p-5">
+        <h3 className="font-display font-bold text-gray-700 text-sm mb-4 pb-3 border-b border-gray-100 uppercase tracking-wider">
+          Kép & Kivonat
+        </h3>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="edit-imageUrl">Kép</Label>
+            <Imageuploader
+              currentUrl={form.imageUrl || null}
+              onUploadDone={(url) =>
+                setForm((prev) => ({ ...prev, imageUrl: url ?? "" }))
+              }
+            />
+          </div>
+          <div>
+            <Label htmlFor="edit-excerpt" required>
+              Kivonat
+            </Label>
+            <Textarea
+              id="edit-excerpt"
+              value={form.excerpt}
+              onChange={set("excerpt")}
+              rows={3}
+              maxLength={300}
+            />
+            <div className="flex justify-between mt-1">
+              <FieldError msg={errors.excerpt} />
+              <span className="text-xs text-gray-300 ml-auto">
+                {form.excerpt?.length ?? 0}/300
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Cikk szövege */}
+      <div className="bg-white rounded-sm border border-gray-100 p-5">
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+          <h3 className="font-display font-bold text-gray-700 text-sm uppercase tracking-wider">
+            Cikk szövege
+          </h3>
+          <div className="flex items-center gap-3 text-xs text-gray-400">
+            <span className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">
+              ## szöveg
+            </span>
+            <span>= Headline</span>
+            <span className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">
+              # szöveg
+            </span>
+            <span>= Alcím</span>
+          </div>
+        </div>
+
+        <div className="flex border border-gray-200 rounded-sm overflow-hidden mb-3 w-fit">
+          {["editor", "preview"].map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setArticleTab(t)}
+              className={`px-4 py-1.5 text-xs font-medium transition-colors
+                ${
+                  articleTab === t
+                    ? "bg-[#d4af37] text-white"
+                    : "bg-white text-gray-500 hover:text-gray-700"
+                }`}
+            >
+              {t === "editor" ? "✏️ Szerkesztő" : "👁 Előnézet"}
+            </button>
+          ))}
+        </div>
+
+        {articleTab === "editor" ? (
+          <>
+            <Textarea
+              id="edit-article"
+              value={form.article}
+              onChange={set("article")}
+              rows={16}
+              className="font-mono text-xs leading-relaxed"
+              placeholder={`## Headline szöveg\n\nSima bekezdés...\n\n# Alcím szöveg\n\nTovábbi bekezdés...`}
+            />
+            <div className="flex justify-between mt-1">
+              <FieldError msg={errors.article} />
+              <span className="text-xs text-gray-300 ml-auto">
+                {form.article?.length ?? 0} karakter · ~
+                {Math.ceil(
+                  (form.article?.split(/\s+/).filter(Boolean).length ?? 0) /
+                    200,
+                )}{" "}
+                perc
+              </span>
+            </div>
+          </>
+        ) : (
+          <div className="min-h-48 border border-gray-100 rounded-sm p-4 bg-[#fafaf9]">
+            <ArticlePreview article={form.article} />
+          </div>
+        )}
+      </div>
+
+      {/* Mentés & Törlés gombók */}
+      <div className="flex gap-3">
+        <button
+          type="submit"
+          disabled={loading || deleting}
+          className="flex-1 bg-[#d4af37] hover:bg-[#b8963e] disabled:opacity-60 disabled:cursor-not-allowed
+            text-white font-semibold text-sm px-8 py-3 rounded-sm transition-colors duration-200
+            flex items-center justify-center gap-2"
+        >
+          {loading ? (
+            <>
+              <svg
+                className="animate-spin w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+                />
+              </svg>
+              Mentés...
+            </>
+          ) : (
+            "💾 Változások mentése"
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={handleDelete}
+          disabled={loading || deleting}
+          className="bg-red-500 hover:bg-red-600 disabled:opacity-60 disabled:cursor-not-allowed
+            text-white font-semibold text-sm px-6 py-3 rounded-sm transition-colors duration-200
+            flex items-center justify-center gap-2"
+        >
+          {deleting ? (
+            <>
+              <svg
+                className="animate-spin w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+                />
+              </svg>
+              Törlés...
+            </>
+          ) : (
+            "🗑️ Cikk törlése"
+          )}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+// ── Keresés / szűrő sáv ───────────────────────────────────
+function SearchBar({ search, onSearch, categoryFilter, onCategoryFilter }) {
+  return (
+    <div className="flex flex-col sm:flex-row gap-3 mb-4">
+      <input
+        type="search"
+        value={search}
+        onChange={(e) => onSearch(e.target.value)}
+        placeholder="Keresés cím alapján..."
+        className="flex-1 bg-white border border-gray-200 rounded-sm px-4 py-2 text-sm
+          focus:outline-none focus:border-[#d4af37] transition-all placeholder:text-gray-300"
+      />
+      <select
+        value={categoryFilter}
+        onChange={(e) => onCategoryFilter(e.target.value)}
+        className="bg-white border border-gray-200 rounded-sm px-4 py-2 text-sm text-gray-700
+          focus:outline-none focus:border-[#d4af37] transition-all"
+      >
+        <option value="">Minden kategória</option>
+        {CATEGORIES.map((c) => (
+          <option key={c} value={c}>
+            {c}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+const Admineditposts = () => {
+  const { posts, loading, error } = usePosts();
+  const [selectedId, setSelectedId] = useState(null);
+  const [status, setStatus] = useState(null);
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+
+  const selectedPost = posts.find((p) => p.id === selectedId) ?? null;
+
+  const filteredPosts = posts.filter((p) => {
+    const matchSearch = p.title?.toLowerCase().includes(search.toLowerCase());
+    const matchCat = !categoryFilter || p.category === categoryFilter;
+    return matchSearch && matchCat;
+  });
+
+  return (
+    <div className="min-h-screen bg-[#f0efed] font-body">
+      {/* Top gold bar */}
+      <div className="h-1 w-full bg-gradient-to-r from-[#b8963e] via-[#f0d060] to-[#b8963e]" />
+
+      {/* Header */}
+      <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+        <div>
+          <p className="text-xs text-gray-400 uppercase tracking-widest mb-0.5">
+            Admin
+          </p>
+          <h1 className="font-display text-xl font-bold text-gray-900">
+            Cikkek szerkesztése
+          </h1>
+        </div>
+        <div className="flex items-center gap-4">
+          <a
+            href="/admin/new"
+            className="text-xs bg-[#d4af37] hover:bg-[#b8963e] text-white font-semibold px-4 py-2 rounded-sm transition-colors"
+          >
+            + Új cikk
+          </a>
+          <a
+            href="/"
+            className="text-xs text-gray-500 hover:text-[#b8963e] transition-colors underline underline-offset-2"
+          >
+            ← Főoldal
+          </a>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <StatusBanner status={status} onClose={() => setStatus(null)} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* ── BAL: Lista ── */}
+          <div className="lg:col-span-2">
+            <div className="sticky top-6">
+              <SearchBar
+                search={search}
+                onSearch={setSearch}
+                categoryFilter={categoryFilter}
+                onCategoryFilter={setCategoryFilter}
+              />
+
+              {/* Post count */}
+              <p className="text-xs text-gray-400 mb-3">
+                {filteredPosts.length} cikk
+                {categoryFilter && ` · ${categoryFilter}`}
+                {search && ` · "${search}"`}
+              </p>
+
+              {/* Lista */}
+              <div className="space-y-2 max-h-[calc(100vh-260px)] overflow-y-auto pr-1">
+                {loading && (
+                  <div className="text-center py-12 text-gray-400 text-sm">
+                    Betöltés...
+                  </div>
+                )}
+                {error && (
+                  <div className="text-center py-12 text-red-400 text-sm">
+                    Hiba: {error}
+                  </div>
+                )}
+                {!loading && filteredPosts.length === 0 && (
+                  <div className="text-center py-12 text-gray-300 text-sm">
+                    Nincs találat
+                  </div>
+                )}
+                {filteredPosts.map((post) => (
+                  <PostListItem
+                    key={post.id}
+                    post={post}
+                    isSelected={post.id === selectedId}
+                    onClick={() => {
+                      setSelectedId(post.id);
+                      setStatus(null);
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ── JOBB: Szerkesztő ── */}
+          <div className="lg:col-span-3">
+            {!selectedPost ? (
+              <div className="bg-white rounded-sm border border-gray-100 h-64 flex flex-col items-center justify-center text-center px-8">
+                <span className="text-4xl mb-3">←</span>
+                <p className="text-gray-400 text-sm">
+                  Válassz ki egy cikket a listából a szerkesztéshez
+                </p>
+              </div>
+            ) : (
+              <div>
+                {/* Szerkesztett cikk fejléce */}
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase tracking-widest">
+                      Szerkesztés
+                    </p>
+                    <h2 className="font-display font-bold text-gray-800 text-lg leading-tight truncate max-w-xs">
+                      {selectedPost.title}
+                    </h2>
+                  </div>
+                  <span className="text-xs font-mono text-gray-300 hidden sm:block">
+                    {selectedPost.id}
+                  </span>
+                </div>
+
+                {/* key={selectedId} → új post kiválasztásakor a form resetelődik */}
+                <EditPanel
+                  key={selectedId}
+                  post={selectedPost}
+                  onSaved={(s) => {
+                    setStatus(s);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  onDeleted={() => {
+                    setSelectedId(null);
+                    setStatus(null);
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Admineditposts;

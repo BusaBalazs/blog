@@ -8,7 +8,12 @@ import LandingPage from "./pages/LandingPage";
 import AboutPage from "./pages/AboutPage";
 import PostPage from "./pages/PostPage";
 import ArticlePage from "./pages/ArticlePage";
-import AdminPage from "./pages/AdminPage";
+
+//--------------------------------------------------
+// Admin
+import Adminhome from "./components/admin/Adminhome";
+import AdminpostUpload from "./components/admin/AdminpostUpload";
+import Admineditposts from "./components/admin/Admineditposts";
 
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------
@@ -38,7 +43,15 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <AdminPage />,
+    element: <Adminhome />,
+  },
+  {
+    path: "/admin/new",
+    element: <AdminpostUpload />,
+  },
+  {
+    path: "/admin/edit",
+    element: <Admineditposts />,
   },
 ]);
 //------------------------------------------------------------------

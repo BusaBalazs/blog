@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { usePosts } from "../data/Postcontext";
@@ -15,8 +15,8 @@ function LikeButton() {
         hover:border-[#d4af37] transition-all duration-200 group"
     >
       <svg
-        width="22"
-        height="22"
+        width="30"
+        height="30"
         viewBox="0 0 24 24"
         fill={liked ? "#d4af37" : "none"}
         stroke={liked ? "#d4af37" : "#9ca3af"}
@@ -40,7 +40,7 @@ function ArticleBody({ text }) {
   const blocks = text.split(/\n\s*\n/).filter(Boolean);
 
   return (
-    <div className="space-y-5">
+    <div >
       {blocks.map((block, i) => {
         // ## Heading támogatás
         if (block.startsWith("## ")) {
@@ -127,8 +127,6 @@ function LoadingSkeleton() {
   );
 }
 
-
-
 //------------------------------------------------
 const Article = () => {
   const { id } = useParams();
@@ -146,21 +144,21 @@ const Article = () => {
   if (!post) return <NotFound />;
 
   return (
-    <div className="bg-[#f0efed] font-body">
-      <main>
+    <div className="font-body">
+      <section>
         {/* ── HERO: kép bal, cím jobb ── */}
-        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 md:pt-14 pb-8 md:pb-12">
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 ">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-0 items-end">
             {/* Kép */}
-            <div className="overflow-hidden rounded-sm">
+            <div className="relative top-[80px] lg:mb-0 mb-8 z-10 overflow-hidden rounded-sm aspect-[510/390]">
               {post.imageUrl ? (
                 <img
                   src={post.imageUrl}
                   alt={post.title}
-                  className="w-full h-64 sm:h-80 lg:h-[420px] object-cover"
+                  className="lg:w-full w-[90%] lg:h-full h-[90%] mx-auto object-cover"
                 />
               ) : (
-                <div className="w-full h-64 sm:h-80 lg:h-[420px] bg-gray-200 flex items-center justify-center text-gray-400 text-4xl">
+                <div className="w-full h-64 lg:h-[420px] bg-gray-200 flex items-center justify-center text-gray-400 text-4xl">
                   📄
                 </div>
               )}
@@ -181,26 +179,27 @@ const Article = () => {
         </section>
 
         {/* ── CIKK TÖRZS ── */}
-        <section className="max-w-3xl mx-auto px-4 sm:px-6 pb-8">
+        <section className="w-full bg-[#f0efed] ">
           {/* Alcím */}
-          {post.subtitle && (
-            <div className="mb-6">
-              <h2 className="font-display font-bold text-gray-900 text-lg mb-3">
-                {post.subtitle}
-              </h2>
+          <div className="max-w-5xl mx-auto pb-4 pt-32 px-12">
+            {post.subtitle && (
+              <div className="mb-6">
+                <h2 className="font-display font-bold text-gray-900 text-lg mb-3">
+                  {post.subtitle}
+                </h2>
+              </div>
+            )}
+
+            {/* Cikk szöveg */}
+            <ArticleBody text={post.article} />
+
+            {/* Like gomb — jobb oldalra igazítva, cikk alatt */}
+            <div className="flex justify-end mt-10 mb-4">
+              <LikeButton />
             </div>
-          )}
-
-          {/* Cikk szöveg */}
-          <ArticleBody text={post.article} />
-
-          {/* Like gomb — jobb oldalra igazítva, cikk alatt */}
-          <div className="flex justify-end mt-10 mb-4">
-            <LikeButton />
           </div>
         </section>
-
-      </main>
+      </section>
     </div>
   );
 };

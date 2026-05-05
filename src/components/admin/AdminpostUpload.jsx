@@ -3,6 +3,8 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../data/firebase";
 import { slugify } from "../../data/Postcontext";
 
+import Imageuploader from "./Imageuploader";
+
 // ── Konstansok ────────────────────────────────────────────
 const CATEGORIES = [
   "Életmód",
@@ -17,7 +19,6 @@ const EMPTY_FORM = {
   category: "",
   date: new Date().toISOString().split("T")[0],
   title: "",
-  subtitle: "",
   excerpt: "",
   imageUrl: "",
   featured: false,
@@ -84,7 +85,52 @@ function StatusBanner({ status }) {
   );
 }
 
-// ── Előnézet kártya ───────────────────────────────────────
+// ── Cikk előnézet (article szintaxis renderelő) ───────────
+function ArticlePreview({ article }) {
+  if (!article?.trim()) {
+    return (
+      <p className="text-gray-300 text-xs italic">
+        A cikk előnézete itt jelenik meg...
+      </p>
+    );
+  }
+
+  const lines = article.split("\n");
+
+  return (
+    <div className="space-y-2 text-xs leading-relaxed">
+      {lines.map((line, i) => {
+        if (line.startsWith("## ")) {
+          return (
+            <p
+              key={i}
+              className="font-display font-bold text-gray-900 text-sm pt-2"
+            >
+              {line.replace(/^## /, "")}
+            </p>
+          );
+        }
+        if (line.startsWith("# ")) {
+          return (
+            <p key={i} className="font-medium text-[#b8963e] pt-1">
+              {line.replace(/^# /, "")}
+            </p>
+          );
+        }
+        if (line.trim() === "") {
+          return <div key={i} className="h-1" />;
+        }
+        return (
+          <p key={i} className="text-gray-600">
+            {line}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Kártya előnézet (landing page-en így néz ki) ──────────
 function PreviewCard({ form }) {
   const hasContent = form.title || form.imageUrl || form.excerpt;
   if (!hasContent) {
@@ -97,11 +143,11 @@ function PreviewCard({ form }) {
   return (
     <article className="font-body">
       {form.imageUrl && (
-        <div className="overflow-hidden rounded-sm mb-4 aspect-[510/390]">
+        <div className="overflow-hidden rounded-sm mb-4 border-b-2 border-[#d4af37]">
           <img
             src={form.imageUrl}
             alt={form.title}
-            className="block w-full h-full object-cover"
+            className="w-full h-40 object-cover"
             onError={(e) => {
               e.target.style.display = "none";
             }}
@@ -124,11 +170,6 @@ function PreviewCard({ form }) {
           {form.title}
         </h3>
       )}
-      {form.subtitle && (
-        <p className="text-sm text-[#b8963e] font-medium mb-2">
-          {form.subtitle}
-        </p>
-      )}
       {form.excerpt && (
         <p className="text-xs text-gray-600 leading-relaxed line-clamp-4">
           {form.excerpt}
@@ -145,9 +186,6 @@ function validate(form) {
   if (!form.category) errors.category = "Válassz kategóriát.";
   if (!form.excerpt.trim()) errors.excerpt = "A kivonat kötelező.";
   if (!form.article.trim()) errors.article = "A cikk szövege kötelező.";
-  if (form.imageUrl && !/^https?:\/\/.+/.test(form.imageUrl)) {
-    errors.imageUrl = "Érvényes URL-t adj meg (https://...).";
-  }
   return errors;
 }
 
@@ -160,6 +198,7 @@ const AdminpostUpload = () => {
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("form"); // "form" | "preview"
+  const [articleTab, setArticleTab] = useState("editor"); // "editor" | "preview"
 
   const set = (field) => (e) => {
     const val =
@@ -184,7 +223,6 @@ const AdminpostUpload = () => {
         category: form.category,
         date: form.date,
         title: form.title.trim(),
-        subtitle: form.subtitle.trim(),
         excerpt: form.excerpt.trim(),
         imageUrl: form.imageUrl.trim(),
         featured: form.featured,
@@ -338,51 +376,37 @@ const AdminpostUpload = () => {
               </div>
             </div>
 
-            {/* Cím + alcím */}
+            {/* Cím */}
             <div className="bg-white rounded-sm border border-gray-100 p-6">
               <h2 className="font-display font-bold text-gray-800 mb-5 pb-3 border-b border-gray-100">
-                Cím & Alcím
+                Cím
               </h2>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="title" required>
-                    Cím
-                  </Label>
-                  <Input
-                    id="title"
-                    type="text"
-                    value={form.title}
-                    onChange={set("title")}
-                    placeholder="pl. A változás nem veszteség"
-                    maxLength={120}
-                  />
-                  <div className="flex justify-between mt-1">
-                    <FieldError msg={errors.title} />
-                    <span className="text-xs text-gray-300 ml-auto">
-                      {form.title.length}/120
+              <div>
+                <Label htmlFor="title" required>
+                  Cím
+                </Label>
+                <Input
+                  id="title"
+                  type="text"
+                  value={form.title}
+                  onChange={set("title")}
+                  placeholder="pl. A változás nem veszteség"
+                  maxLength={120}
+                />
+                <div className="flex justify-between mt-1">
+                  <FieldError msg={errors.title} />
+                  <span className="text-xs text-gray-300 ml-auto">
+                    {form.title.length}/120
+                  </span>
+                </div>
+                {form.title && (
+                  <p className="mt-1 text-xs text-gray-400">
+                    Slug:{" "}
+                    <span className="font-mono text-[#b8963e]">
+                      /cikk/{slugify(form.title)}
                     </span>
-                  </div>
-                  {form.title && (
-                    <p className="mt-1 text-xs text-gray-400">
-                      Slug:{" "}
-                      <span className="font-mono text-[#b8963e]">
-                        /cikk/{slugify(form.title)}
-                      </span>
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="subtitle">Alcím</Label>
-                  <Input
-                    id="subtitle"
-                    type="text"
-                    value={form.subtitle}
-                    onChange={set("subtitle")}
-                    placeholder="Rövid kiegészítő mondat"
-                    maxLength={200}
-                  />
-                </div>
+                  </p>
+                )}
               </div>
             </div>
 
@@ -393,18 +417,13 @@ const AdminpostUpload = () => {
               </h2>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="imageUrl">Kép URL</Label>
-                  <Input
-                    id="imageUrl"
-                    type="url"
-                    value={form.imageUrl}
-                    onChange={set("imageUrl")}
-                    placeholder="https://..."
+                  <Label htmlFor="imageUrl">Kép</Label>
+                  <Imageuploader
+                    currentUrl={form.imageUrl || null}
+                    onUploadDone={(url) =>
+                      setForm((prev) => ({ ...prev, imageUrl: url ?? "" }))
+                    }
                   />
-                  <FieldError msg={errors.imageUrl} />
-                  <p className="mt-1 text-xs text-gray-400">
-                    Firebase Storage URL vagy külső kép link
-                  </p>
                 </div>
 
                 <div>
@@ -431,29 +450,68 @@ const AdminpostUpload = () => {
 
             {/* Cikk szövege */}
             <div className="bg-white rounded-sm border border-gray-100 p-6">
-              <h2 className="font-display font-bold text-gray-800 mb-5 pb-3 border-b border-gray-100">
-                Cikk szövege
-              </h2>
-              <Label htmlFor="article" required>
-                Tartalom
-              </Label>
-              <Textarea
-                id="article"
-                value={form.article}
-                onChange={set("article")}
-                placeholder="A teljes cikk szövege ide kerül. Bekezdéseket üres sorral válaszd el."
-                rows={14}
-              />
-              <div className="flex justify-between mt-1">
-                <FieldError msg={errors.article} />
-                <span className="text-xs text-gray-300 ml-auto">
-                  {form.article.length} karakter · ~
-                  {Math.ceil(
-                    form.article.split(/\s+/).filter(Boolean).length / 200,
-                  )}{" "}
-                  perc olvasás
-                </span>
+              <div className="flex items-center justify-between mb-5 pb-3 border-b border-gray-100">
+                <h2 className="font-display font-bold text-gray-800">
+                  Cikk szövege
+                </h2>
+                {/* Szintaxis segítség */}
+                <div className="flex items-center gap-3 text-xs text-gray-400">
+                  <span className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">
+                    ## szöveg
+                  </span>
+                  <span>= Headline</span>
+                  <span className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">
+                    # szöveg
+                  </span>
+                  <span>= Alcím</span>
+                </div>
               </div>
+
+              {/* Editor / Preview tab váltó */}
+              <div className="flex border border-gray-200 rounded-sm overflow-hidden mb-3 w-fit">
+                {["editor", "preview"].map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setArticleTab(t)}
+                    className={`px-4 py-1.5 text-xs font-medium transition-colors
+                      ${
+                        articleTab === t
+                          ? "bg-[#d4af37] text-white"
+                          : "bg-white text-gray-500 hover:text-gray-700"
+                      }`}
+                  >
+                    {t === "editor" ? "✏️ Szerkesztő" : "👁 Előnézet"}
+                  </button>
+                ))}
+              </div>
+
+              {articleTab === "editor" ? (
+                <>
+                  <Textarea
+                    id="article"
+                    value={form.article}
+                    onChange={set("article")}
+                    placeholder={`## Ez egy headline (vastag fejléc)\n\nSima bekezdés szövege üres sorral elválasztva.\n\n# Ez egy alcím (arany, kisebb)\n\nTovábbi bekezdés szövege...`}
+                    rows={16}
+                    className="font-mono text-xs leading-relaxed"
+                  />
+                  <div className="flex justify-between mt-1">
+                    <FieldError msg={errors.article} />
+                    <span className="text-xs text-gray-300 ml-auto">
+                      {form.article.length} karakter · ~
+                      {Math.ceil(
+                        form.article.split(/\s+/).filter(Boolean).length / 200,
+                      )}{" "}
+                      perc olvasás
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="min-h-48 border border-gray-100 rounded-sm p-4 bg-[#fafaf9]">
+                  <ArticlePreview article={form.article} />
+                </div>
+              )}
             </div>
 
             {/* Gombok */}
@@ -507,7 +565,8 @@ const AdminpostUpload = () => {
           <aside
             className={`lg:col-span-1 ${activeTab === "form" ? "hidden lg:block" : ""}`}
           >
-            <div className="sticky top-6">
+            <div className="sticky top-6 space-y-4">
+              {/* Kártya előnézet */}
               <div className="bg-white rounded-sm border border-gray-100 p-6 min-h-64">
                 <h2 className="font-display font-bold text-gray-800 mb-5 pb-3 border-b border-gray-100 text-sm uppercase tracking-wider">
                   Kártya előnézet
@@ -516,7 +575,7 @@ const AdminpostUpload = () => {
               </div>
 
               {/* Firestore struktúra */}
-              <div className="mt-4 bg-gray-800 rounded-sm p-4">
+              <div className="bg-gray-800 rounded-sm p-4">
                 <p className="text-xs text-gray-400 uppercase tracking-widest mb-3">
                   Firestore mező struktúra
                 </p>
@@ -525,7 +584,6 @@ const AdminpostUpload = () => {
   category: "${form.category || "…"}",
   date: "${form.date}",
   title: "${form.title ? form.title.slice(0, 20) + (form.title.length > 20 ? "…" : "") : "…"}",
-  subtitle: "…",
   excerpt: "…",
   imageUrl: "…",
   featured: ${form.featured},
@@ -534,6 +592,47 @@ const AdminpostUpload = () => {
   createdAt: Timestamp
 }`}
                 </pre>
+              </div>
+
+              {/* Szintaxis referencia */}
+              <div className="bg-white rounded-sm border border-gray-100 p-4">
+                <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
+                  Szintaxis referencia
+                </p>
+                <div className="space-y-2 text-xs">
+                  <div className="flex gap-2 items-start">
+                    <code className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 shrink-0">
+                      ## szöveg
+                    </code>
+                    <span className="text-gray-500">
+                      →{" "}
+                      <span className="font-bold text-gray-800">Headline</span>{" "}
+                      (vastag fejléc)
+                    </span>
+                  </div>
+                  <div className="flex gap-2 items-start">
+                    <code className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 shrink-0">
+                      # szöveg
+                    </code>
+                    <span className="text-gray-500">
+                      →{" "}
+                      <span className="text-[#b8963e] font-medium">Alcím</span>{" "}
+                      (arany)
+                    </span>
+                  </div>
+                  <div className="flex gap-2 items-start">
+                    <code className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 shrink-0">
+                      üres sor
+                    </code>
+                    <span className="text-gray-500">→ új bekezdés</span>
+                  </div>
+                  <div className="flex gap-2 items-start">
+                    <code className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 shrink-0">
+                      sima szöveg
+                    </code>
+                    <span className="text-gray-500">→ normál bekezdés</span>
+                  </div>
+                </div>
               </div>
             </div>
           </aside>
