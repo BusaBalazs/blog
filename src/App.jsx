@@ -8,6 +8,7 @@ import LandingPage from "./pages/LandingPage";
 import AboutPage from "./pages/AboutPage";
 import PostPage from "./pages/PostPage";
 import ArticlePage from "./pages/ArticlePage";
+import ContactPage from "./pages/ContactPage";
 
 //--------------------------------------------------
 // Admin
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "/article/:id",
         element: <ArticlePage />,
+      },
+      {
+        path: "/contact",
+        element: <ContactPage />,
       },
     ],
   },

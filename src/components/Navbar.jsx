@@ -8,24 +8,6 @@ const NAV_ITEMS = [
   { label: "Főoldal", href: "/" },
   {
     label: "Bejegyzések",
-    categoris: [
-      {
-        categori: "Életmód",
-        href: "/posts/eletmod",
-      },
-      {
-        categori: "Egészség",
-        href: "/posts/egeszseg",
-      },
-      {
-        categori: "Kapcsolatok",
-        href: "/posts/kapcsolat",
-      },
-      {
-        categori: "Szépség",
-        href: "/posts/szepseg",
-      },
-    ],
     hasDropdown: true,
   },
   { label: "Bemutatkozás", href: "/about" },
@@ -90,12 +72,12 @@ export default function Navbar() {
                 </Link>
               ),
             )}
-            <a
-              href="#"
+            <Link
+              to="/contact"
               className="text-sm border border-gray-800 px-5 py-2 rounded hover:bg-gray-800 hover:text-white transition-all duration-200"
             >
               Írd meg a Te történeted
-            </a>
+            </Link>
           </nav>
 
           {/* Mobile hamburger */}
@@ -145,13 +127,13 @@ export default function Navbar() {
               </a>
             ),
           )}
-          <a
-            href="#"
+          <Link
+            to="/contact"
             className="text-sm border border-gray-800 px-5 py-2 rounded text-center hover:bg-gray-800 hover:text-white transition-all duration-200"
             onClick={() => setMenuOpen(false)}
           >
             Írd meg a Te történeted
-          </a>
+          </Link>
         </div>
       )}
     </div>
