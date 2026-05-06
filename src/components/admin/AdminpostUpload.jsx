@@ -406,7 +406,14 @@ const AdminpostUpload = () => {
                     {form.title.length}/120
                   </span>
                 </div>
-              
+                {form.title && (
+                  <p className="mt-1 text-xs text-gray-400">
+                    Slug:{" "}
+                    <span className="font-mono text-[#b8963e]">
+                      /cikk/{slugify(form.title)}
+                    </span>
+                  </p>
+                )}
               </div>
             </div>
 
@@ -602,7 +609,12 @@ const AdminpostUpload = () => {
                       </span>{" "}
                     </span>
                   </div>
-
+                  <div className="flex gap-2 items-start">
+                    <code className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 shrink-0">
+                      üres sor
+                    </code>
+                    <span className="text-gray-500">→ új bekezdés</span>
+                  </div>
                   <div className="flex gap-2 items-start">
                     <code className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 shrink-0">
                       sima szöveg
