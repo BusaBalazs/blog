@@ -10,6 +10,7 @@ const NAV_ITEMS = [
     label: "Bejegyzések",
     hasDropdown: true,
   },
+  { label: "Coaching", href: "/coaching" },
   { label: "Bemutatkozás", href: "/about" },
 ];
 
@@ -44,7 +45,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8">
             {NAV_ITEMS.map((item) =>
               item.hasDropdown ? (
                 <div key={item.label} className="relative">
@@ -96,7 +97,7 @@ export default function Navbar() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden p-2 text-gray-700"
+            className="lg:hidden p-2 text-gray-700"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Menü"
           >
@@ -107,7 +108,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 flex flex-col gap-4">
+        <div className="lg:hidden bg-white border-t border-gray-100 px-4 py-4 flex flex-col gap-4">
           {NAV_ITEMS.map((item) =>
             item.hasDropdown ? (
               <div key={item.label} className="flex flex-col gap-2">

@@ -83,7 +83,7 @@ const Videos = ({ videos = MOCK_VIDEOS }) => {
    */
 
   return (
-    <section className="bg-gray-50  px-4 sm:px-6 lg:px-8 ">
+    <section className="bg-gray-50  px-4 sm:px-6 lg:px-8 pb-4">
       <div className="max-w-[1200px]  mx-auto">
         {/* Section header */}
         <div className="inline-block mb-8">
