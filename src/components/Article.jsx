@@ -1,75 +1,111 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { doc, updateDoc, increment } from "firebase/firestore";
+import { db } from "../data/firebase";
 import { usePosts } from "../data/Postcontext";
 
 // ── Like gomb ─────────────────────────────────────────────
-function LikeButton() {
-  const [liked, setLiked] = useState(false);
+function LikeButton({ postId, initialLikes = 0 }) {
+  // localStorage-ból olvassuk, hogy like-olta-e már ezt a cikket
+  const storageKey = `liked_post_${postId}`;
+  const [liked, setLiked] = useState(() => {
+    return localStorage.getItem(storageKey) === "true";
+  });
+  const [likes, setLikes] = useState(initialLikes);
+  const [loading, setLoading] = useState(false);
+
+  // Frissítjük a likes számát a Firebase adatból
+  useEffect(() => {
+    setLikes(initialLikes);
+  }, [initialLikes]);
+
+  const handleLike = async () => {
+    if (liked || loading) return;
+
+    setLoading(true);
+    try {
+      const postRef = doc(db, "posts", postId);
+      await updateDoc(postRef, {
+        likes: increment(1),
+      });
+      // Csak a liked állapotot állítjuk be — a szám frissítését
+      // a Firestore onSnapshot végzi az initialLikes propomon keresztül
+      setLiked(true);
+      localStorage.setItem(storageKey, "true");
+    } catch (err) {
+      console.error("Like mentési hiba:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <button
-      onClick={() => setLiked((p) => !p)}
-      aria-label={liked ? "Kedvelés visszavonása" : "Cikk kedvelése"}
-      className="flex items-center justify-center w-11 h-11 rounded-full border border-gray-200
-        hover:border-[#d4af37] transition-all duration-200 group"
+      onClick={handleLike}
+      disabled={liked || loading}
+      aria-label={liked ? "Már kedvelted ezt a cikket" : "Cikk kedvelése"}
+      className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-200 group
+        ${liked
+          ? "border-[#d4af37] bg-[#fdf8ec] cursor-default"
+          : "border-gray-200 hover:border-[#d4af37] cursor-pointer"
+        }
+        ${loading ? "opacity-60" : ""}
+      `}
     >
       <svg
-        width="30"
-        height="30"
+        width="22"
+        height="22"
         viewBox="0 0 24 24"
         fill={liked ? "#d4af37" : "none"}
         stroke={liked ? "#d4af37" : "#9ca3af"}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="transition-all duration-200 group-hover:stroke-[#d4af37]"
+        className={`transition-all duration-200 ${!liked ? "group-hover:stroke-[#d4af37]" : ""}`}
       >
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
       </svg>
+
+      {/* Like szám */}
+      <span className={`text-sm font-medium transition-colors duration-200
+        ${liked ? "text-[#d4af37]" : "text-gray-400 group-hover:text-[#d4af37]"}`}>
+        {likes > 0 ? likes : ""}
+      </span>
+
+      {/* Szöveg */}
+      <span className={`text-xs transition-colors duration-200
+        ${liked ? "text-[#b8963e]" : "text-gray-400 group-hover:text-[#d4af37]"}`}>
+        {liked ? "Kedvelted" : "Tetszik"}
+      </span>
     </button>
   );
 }
 
 // ── Cikk szöveg renderelő ─────────────────────────────────
-// Az article mező sima szöveg, bekezdéseket üres sor választja el.
-// Ha valaki markdown-szerű ## Alcím szintaxist akar, az itt bővíthető.
 function ArticleBody({ text }) {
   if (!text) return null;
 
   const blocks = text.split(/\n\s*\n/).filter(Boolean);
 
   return (
-    <div >
+    <div>
       {blocks.map((block, i) => {
-        // ## Heading támogatás
         if (block.startsWith("## ")) {
           return (
-            <h2
-              key={i}
-              className="font-display font-bold text-gray-900 text-xl mt-8 mb-2"
-            >
+            <h2 key={i} className="font-display font-bold text-gray-900 text-xl mt-8 mb-2">
               {block.replace(/^## /, "")}
             </h2>
           );
         }
-        // # subtitle támogatás
         if (block.startsWith("# ")) {
           return (
-            <h2
-              key={i}
-              className="font-display font-bold text-gray-900 text-lg mt-8 mb-2"
-            >
+            <h2 key={i} className="font-display font-bold text-gray-900 text-lg mt-8 mb-2">
               {block.replace(/^# /, "")}
             </h2>
           );
         }
-        // Sima bekezdés
         return (
-          <p
-            key={i}
-            className="text-sm md:text-base text-gray-700 leading-relaxed"
-          >
+          <p key={i} className="text-sm md:text-base text-gray-700 leading-relaxed">
             {block.trim()}
           </p>
         );
@@ -104,7 +140,6 @@ function NotFound() {
 function LoadingSkeleton() {
   return (
     <div className="animate-pulse">
-      {/* Hero image skeleton */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 items-end">
           <div className="bg-gray-200 rounded-sm h-72 lg:h-[420px]" />
@@ -114,20 +149,16 @@ function LoadingSkeleton() {
           </div>
         </div>
       </div>
-      {/* Body skeleton */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-3 pb-16">
         {[...Array(6)].map((_, i) => (
-          <div
-            key={i}
-            className={`bg-gray-200 rounded h-4 ${i % 3 === 2 ? "w-2/3" : "w-full"}`}
-          />
+          <div key={i} className={`bg-gray-200 rounded h-4 ${i % 3 === 2 ? "w-2/3" : "w-full"}`} />
         ))}
       </div>
     </div>
   );
 }
 
-//------------------------------------------------
+// ── Fő komponens ──────────────────────────────────────────
 const Article = () => {
   const { id } = useParams();
   const { getPostById, loading } = usePosts();
@@ -147,7 +178,7 @@ const Article = () => {
     <div className="font-body">
       <section>
         {/* ── HERO: kép bal, cím jobb ── */}
-        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 ">
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-0 items-end">
             {/* Kép */}
             <div className="relative top-[80px] lg:mb-0 mb-8 z-10 overflow-hidden rounded-sm aspect-[510/390]">
@@ -164,7 +195,7 @@ const Article = () => {
               )}
             </div>
 
-            {/* Cím + meta — desktop: jobbra alulra igazítva */}
+            {/* Cím + meta */}
             <div className="lg:pl-12 lg:pb-4 text-left lg:text-right">
               <h1 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-3">
                 {post.title}
@@ -179,8 +210,7 @@ const Article = () => {
         </section>
 
         {/* ── CIKK TÖRZS ── */}
-        <section className="w-full bg-[#f0efed] ">
-          {/* Alcím */}
+        <section className="w-full bg-[#f0efed]">
           <div className="max-w-5xl mx-auto pb-4 lg:pt-32 pt-8 px-12">
             {post.subtitle && (
               <div className="mb-6">
@@ -190,12 +220,11 @@ const Article = () => {
               </div>
             )}
 
-            {/* Cikk szöveg */}
             <ArticleBody text={post.article} />
 
-            {/* Like gomb — jobb oldalra igazítva, cikk alatt */}
+            {/* Like gomb */}
             <div className="flex justify-end mt-10 mb-4">
-              <LikeButton />
+              <LikeButton postId={post.id} initialLikes={post.likes ?? 0} />
             </div>
           </div>
         </section>
