@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { Link } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
 
 import { slugify, usePosts } from "../data/Postcontext";
 //---------------------------------------------------------------
@@ -19,8 +19,16 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const location = useLocation();
 
   const { categories } = usePosts();
+
+  const isPostsPath = location.pathname.startsWith("/posts");
+
+  const linkClass = ({ isActive }) =>
+    `text-sm transition-colors ${
+      isActive ? "text-gray-900 font-semibold underline decoration-[#d4af37] underline-offset-4" : "text-gray-700 hover:text-gray-900"
+    }`;
 
   //---------------------------------------------------------------
   return (
@@ -42,7 +50,11 @@ export default function Navbar() {
                 <div key={item.label} className="relative">
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="flex items-center gap-1 text-sm text-gray-700 hover:text-gray-900 transition-colors"
+                    className={`flex items-center gap-1 text-sm transition-colors ${
+                      isPostsPath
+                        ? "text-gray-900 font-semibold underline decoration-[#d4af37] underline-offset-4"
+                        : "text-gray-700 hover:text-gray-900"
+                    }`}
                   >
                     {item.label}
                     <ChevronDown size={14} />
@@ -55,6 +67,7 @@ export default function Navbar() {
                             key={cat}
                             to={`/posts/${slugify(cat)}`}
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#f0efed] transition-colors"
+                             onClick={() => setDropdownOpen(!dropdownOpen)}
                           >
                             {cat}
                           </Link>
@@ -63,13 +76,14 @@ export default function Navbar() {
                   )}
                 </div>
               ) : (
-                <Link
+                <NavLink
                   key={item.label}
                   to={item.href}
-                  className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
+                  end={item.href === "/"}
+                  className={linkClass}
                 >
                   {item.label}
-                </Link>
+                </NavLink>
               ),
             )}
             <Link
@@ -117,14 +131,21 @@ export default function Navbar() {
                   ))}
               </div>
             ) : (
-              <a
+              <NavLink
                 key={item.label}
-                href={item.href}
-                className="text-sm text-gray-700 hover:text-gray-900"
+                to={item.href}
+                end={item.href === "/"}
+                className={({ isActive }) =>
+                  `text-sm transition-colors ${
+                    isActive
+                      ? "text-gray-900 font-semibold underline decoration-[#d4af37] underline-offset-4"
+                      : "text-gray-700 hover:text-gray-900"
+                  }`
+                }
                 onClick={() => setMenuOpen(false)}
               >
                 {item.label}
-              </a>
+              </NavLink>
             ),
           )}
           <Link

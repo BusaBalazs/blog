@@ -2,9 +2,9 @@ import React, { useState, useRef } from "react";
 import emailjs from "@emailjs/browser";
 
 // ── EmailJS konfig ───────────────────────────
-const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID";
-const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
-const EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY";
+const EMAILJS_SERVICE_ID = "service_iv5wxff";
+const EMAILJS_TEMPLATE_ID = "template_w54sj1f";
+const EMAILJS_PUBLIC_KEY = "0ayuxbX1_0toL3p-i";
 
 // ── Segéd komponensek ─────────────────────────────────────
 function Label({ htmlFor, children, required }) {
@@ -81,7 +81,7 @@ const Contactform = () => {
     }
 
     setStatus("sending");
-/*
+    
     try {
       await emailjs.sendForm(
         EMAILJS_SERVICE_ID,
@@ -90,12 +90,13 @@ const Contactform = () => {
         EMAILJS_PUBLIC_KEY,
       );
       setStatus("success");
+      console.log(form)
       setForm({ name: "", email: "", phone: "", message: "" });
       setErrors({});
     } catch (err) {
       console.error("EmailJS hiba:", err);
       setStatus("error");
-    }*/
+    }
   };
 
   const isSending = status === "sending";
@@ -164,7 +165,7 @@ const Contactform = () => {
           <Field id="name" label="Teljes neved" required error={errors.name}>
             <input
               id="name"
-              name="from_name"
+              name="name"
               type="text"
               value={form.name}
               onChange={set("name")}
@@ -178,7 +179,7 @@ const Contactform = () => {
           <Field id="email" label="Email cím" required error={errors.email}>
             <input
               id="email"
-              name="from_email"
+              name="email"
               type="email"
               value={form.email}
               onChange={set("email")}

@@ -29,14 +29,12 @@ const Posts = () => {
         </div>
 
         {/* Desktop layout: featured left, side posts right */}
-        <div className="hidden md:grid grid-cols-2 gap-10">
-          <div className="flex flex-col gap-6 divide-y divide-gray-200">
-            {posts.map((post) => (
-              <div key={post.id} className="pt-6">
-                <SidePost post={post} />
-              </div>
-            ))}
-          </div>
+        <div className="hidden md:grid grid-cols-2 gap-x-20 gap-y-10 w-full">
+          {posts.map((post) => (
+            <div key={post.id} className="pt-6">
+              <SidePost post={post} />
+            </div>
+          ))}
         </div>
 
         {/* Mobile layout: stacked cards */}
