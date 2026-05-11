@@ -10,6 +10,7 @@ import PostPage from "./pages/PostPage";
 import ArticlePage from "./pages/ArticlePage";
 import ContactPage from "./pages/ContactPage";
 import CoachingPage from "./pages/CoachingPage";
+import ContactCoachingPage from "./pages/ContactCoachingPage";
 
 //--------------------------------------------------
 // Admin
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: "/contact",
         element: <ContactPage />,
+      },
+      {
+        path: "/contactCoaching",
+        element: <ContactCoachingPage />,
       },
     ],
   },

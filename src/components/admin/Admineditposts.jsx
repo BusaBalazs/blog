@@ -358,14 +358,6 @@ function EditPanel({ post, onSaved, onDeleted }) {
               {form.title?.length ?? 0}/120
             </span>
           </div>
-          {form.title && (
-            <p className="mt-1 text-xs text-gray-400">
-              Slug:{" "}
-              <span className="font-mono text-[#b8963e]">
-                /cikk/{slugify(form.title)}
-              </span>
-            </p>
-          )}
         </div>
       </div>
 

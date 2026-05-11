@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 
 // ── EmailJS konfig ───────────────────────────
@@ -54,14 +55,15 @@ function validate({ name, email, message }) {
 
 //----------------------------------------------------
 //----------------------------------------------------
-const Contactform = () => {
+const CoachingForm = () => {
   const formRef = useRef(null);
+  const location = useLocation();
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
-    message: "",
+    message: location.state?.message ?? "",
   });
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState(null); // null | "sending" | "success" | "error"
@@ -81,7 +83,7 @@ const Contactform = () => {
     }
 
     setStatus("sending");
-    
+
     try {
       await emailjs.sendForm(
         EMAILJS_SERVICE_ID,
@@ -106,16 +108,13 @@ const Contactform = () => {
         {/* Fejléc */}
         <div className="mb-8">
           <p className="text-xs text-gray-400 uppercase tracking-widest mb-2">
-            Kapcsolat
+            Coaching kapcsolatfelvétel
           </p>
-          {/* Arany vonal */}
           <div className="mb-4 h-0.5 w-12 bg-[#d4af37]" />
           <h2 className="font-display text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
-            Írd meg a Te történeted
+            Érdekel a coaching program? Vedd fel velem a kapcsolatot!
           </h2>
-          <p className="text-sm text-gray-500 mt-2 leading-relaxed">
-            Van egy élményed, amit szeretnél megosztani? Küld el nekem!
-          </p>
+          {/* Arany vonal */}
         </div>
 
         {/* Sikerüzenet */}
@@ -229,8 +228,8 @@ const Contactform = () => {
           <button
             type="submit"
             disabled={isSending}
-            className="w-full bg-gold  disabled:opacity-60
-              disabled:cursor-not-allowed  font-bold text-sm
+            className="w-full bg-[#d4af37] hover:bg-[#b8963e] disabled:opacity-60
+              disabled:cursor-not-allowed text-white font-semibold text-sm
               py-3 px-8 rounded-sm transition-colors duration-200
               flex items-center justify-center gap-2"
           >
@@ -272,4 +271,4 @@ const Contactform = () => {
   );
 };
 
-export default Contactform;
+export default CoachingForm;

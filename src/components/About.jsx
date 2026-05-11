@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+//---------------------------------------------------------
 const TOPICS = [
   {
     title: "Önismeret & identitás",
@@ -32,20 +33,15 @@ const TOPICS = [
   },
 ];
 
+//---------------------------------------------------------
+//---------------------------------------------------------
 const About = () => {
   return (
     <div className="font-body bg-[#f0efed] overflow-x-hidden">
-      <style>{`
-        .topic-pill:hover .pill-dot { transform: scale(1.5); background: #d4af37; }
-        .pill-dot { transition: transform 0.25s ease, background 0.25s ease; }
-      `}</style>
-
       {/* ── HERO ── */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+      <section className="relative md:min-h-[60vh] min-h-[30vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#f5f2ed] via-[#f0efed] to-[#ede8e0]" />
-        <div className="absolute top-20 right-[8%] w-72 h-72 rounded-full bg-[#d4af37]/8 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-20 left-[5%] w-48 h-48 rounded-full bg-[#b8963e]/6 blur-2xl pointer-events-none" />
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 font-display text-[20vw] font-bold text-[#d4af37]/5 leading-none select-none pointer-events-none tracking-tighter">
+        <div className="md:block hidden absolute right-16 top-1/2 -translate-y-1/2 font-display text-[20vw] font-bold text-[#d4af37]/15 leading-none select-none pointer-events-none tracking-tighter">
           VK
         </div>
 
@@ -153,7 +149,7 @@ const About = () => {
                 },
                 {
                   n: "03",
-                  title: "Az oldal",
+                  title: "Az oldal célja",
                   text: "Ez az oldal azért született, hogy ezt az életérzést erősítse – és hogy ne legyél egyedül az úton.",
                 },
               ].map((item) => (
@@ -210,7 +206,7 @@ const About = () => {
                 <span className="font-display font-bold md:text-[1em] text-sm text-gray-800">
                   {topic.title}
                 </span>
-                <span className=" md:text-[1em] text-xs text-gray-400 hidden sm:inline">
+                <span className=" md:text-[1em] text-xs text-gray-600 hidden sm:inline">
                   — {topic.desc}
                 </span>
               </div>
@@ -242,7 +238,7 @@ const About = () => {
               </div>
               <div className="flex-shrink-0">
                 <Link
-                  to="/contact"
+                  to="/coaching"
                   className="inline-flex items-center gap-3 bg-[#d4af37] hover:bg-[#b8963e]
                     text-white font-semibold text-sm px-8 py-4 rounded-sm
                     transition-all duration-200 group shadow-lg shadow-black/20 whitespace-nowrap"

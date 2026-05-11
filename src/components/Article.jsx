@@ -45,9 +45,10 @@ function LikeButton({ postId, initialLikes = 0 }) {
       disabled={liked || loading}
       aria-label={liked ? "Már kedvelted ezt a cikket" : "Cikk kedvelése"}
       className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-200 group
-        ${liked
-          ? "border-[#d4af37] bg-[#fdf8ec] cursor-default"
-          : "border-gray-200 hover:border-[#d4af37] cursor-pointer"
+        ${
+          liked
+            ? "border-[#d4af37] bg-[#fdf8ec] cursor-default"
+            : "border-gray-400 hover:border-[#d4af37] cursor-pointer"
         }
         ${loading ? "opacity-60" : ""}
       `}
@@ -67,14 +68,18 @@ function LikeButton({ postId, initialLikes = 0 }) {
       </svg>
 
       {/* Like szám */}
-      <span className={`text-sm font-medium transition-colors duration-200
-        ${liked ? "text-[#d4af37]" : "text-gray-400 group-hover:text-[#d4af37]"}`}>
+      <span
+        className={`text-sm font-medium transition-colors duration-200
+        ${liked ? "text-[#d4af37]" : "text-gray-400 group-hover:text-[#d4af37]"}`}
+      >
         {likes > 0 ? likes : ""}
       </span>
 
       {/* Szöveg */}
-      <span className={`text-xs transition-colors duration-200
-        ${liked ? "text-[#b8963e]" : "text-gray-400 group-hover:text-[#d4af37]"}`}>
+      <span
+        className={`text-xs transition-colors duration-200
+        ${liked ? "text-[#b8963e]" : "text-gray-400 group-hover:text-[#d4af37]"}`}
+      >
         {liked ? "Kedvelted" : "Tetszik"}
       </span>
     </button>
@@ -92,20 +97,29 @@ function ArticleBody({ text }) {
       {blocks.map((block, i) => {
         if (block.startsWith("## ")) {
           return (
-            <h2 key={i} className="font-display font-bold text-gray-900 text-xl mt-8 mb-2">
+            <h2
+              key={i}
+              className="font-display font-bold text-gray-900 text-xl mt-8 mb-2"
+            >
               {block.replace(/^## /, "")}
             </h2>
           );
         }
         if (block.startsWith("# ")) {
           return (
-            <h2 key={i} className="font-display font-bold text-gray-900 text-lg mt-8 mb-2">
+            <h2
+              key={i}
+              className="font-display font-bold text-[#a0802a] text-md mt-8 mb-2"
+            >
               {block.replace(/^# /, "")}
             </h2>
           );
         }
         return (
-          <p key={i} className="text-sm md:text-base text-gray-700 leading-relaxed">
+          <p
+            key={i}
+            className="text-sm md:text-base text-gray-700 leading-relaxed"
+          >
             {block.trim()}
           </p>
         );
@@ -151,7 +165,10 @@ function LoadingSkeleton() {
       </div>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-3 pb-16">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className={`bg-gray-200 rounded h-4 ${i % 3 === 2 ? "w-2/3" : "w-full"}`} />
+          <div
+            key={i}
+            className={`bg-gray-200 rounded h-4 ${i % 3 === 2 ? "w-2/3" : "w-full"}`}
+          />
         ))}
       </div>
     </div>
