@@ -445,7 +445,7 @@ function EditPanel({ post, onSaved, onDeleted }) {
             />
             <div className="flex justify-between mt-1">
               <FieldError msg={errors.article} />
-              <span className="text-xs text-gray-300 ml-auto">
+              <span className="text-xs text-gray-500 ml-auto">
                 {form.article?.length ?? 0} karakter · ~
                 {Math.ceil(
                   (form.article?.split(/\s+/).filter(Boolean).length ?? 0) /

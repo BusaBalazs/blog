@@ -5,16 +5,7 @@ import { slugify } from "../../data/Postcontext";
 
 import Imageuploader from "./Imageuploader";
 
-// ── Konstansok ────────────────────────────────────────────
-const CATEGORIES = [
-  "Életmód",
-  "Egészség",
-  "Kapcsolatok",
-  "Szépség",
-  "Pszichológia",
-  "Karrier",
-];
-
+//----------------------------------------------------------
 const EMPTY_FORM = {
   category: "",
   date: new Date().toISOString().split("T")[0],
@@ -227,7 +218,6 @@ const AdminpostUpload = () => {
         imageUrl: form.imageUrl.trim(),
         featured: form.featured,
         article: form.article.trim(),
-        slug: slugify(form.title),
         createdAt: serverTimestamp(),
       });
 
@@ -278,7 +268,6 @@ const AdminpostUpload = () => {
         <a
           href="/admin"
           className="text-xs text-gray-500 hover:text-[#b8963e] transition-colors underline underline-offset-2"
-          target="_blank"
         >
           ← Vissza
         </a>
@@ -322,21 +311,15 @@ const AdminpostUpload = () => {
                   <Label htmlFor="category" required>
                     Kategória
                   </Label>
-                  <select
+                  <input
                     id="category"
                     value={form.category}
                     onChange={set("category")}
                     className="w-full bg-white border border-gray-200 rounded-sm px-4 py-2.5 text-sm
                       text-gray-800 focus:outline-none focus:border-[#d4af37] focus:ring-1
                       focus:ring-[#d4af37]/30 transition-all"
-                  >
-                    <option value="">Válassz...</option>
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
+                  />
+
                   <FieldError msg={errors.category} />
                 </div>
 
@@ -406,14 +389,6 @@ const AdminpostUpload = () => {
                     {form.title.length}/120
                   </span>
                 </div>
-                {form.title && (
-                  <p className="mt-1 text-xs text-gray-400">
-                    Slug:{" "}
-                    <span className="font-mono text-[#b8963e]">
-                      /cikk/{slugify(form.title)}
-                    </span>
-                  </p>
-                )}
               </div>
             </div>
 
@@ -506,7 +481,7 @@ const AdminpostUpload = () => {
                   />
                   <div className="flex justify-between mt-1">
                     <FieldError msg={errors.article} />
-                    <span className="text-xs text-gray-300 ml-auto">
+                    <span className="text-xs text-gray-500 ml-auto">
                       {form.article.length} karakter · ~
                       {Math.ceil(
                         form.article.split(/\s+/).filter(Boolean).length / 200,

@@ -90,37 +90,40 @@ function LikeButton({ postId, initialLikes = 0 }) {
 function ArticleBody({ text }) {
   if (!text) return null;
 
-  const blocks = text.split(/\n\s*\n/).filter(Boolean);
+  const lines = text.split("\n");
 
   return (
     <div>
-      {blocks.map((block, i) => {
-        if (block.startsWith("## ")) {
+      {lines.map((line, i) => {
+        if (line.startsWith("## ")) {
           return (
             <h2
               key={i}
               className="font-display font-bold text-gray-900 text-xl mt-8 mb-2"
             >
-              {block.replace(/^## /, "")}
+              {line.replace(/^## /, "")}
             </h2>
           );
         }
-        if (block.startsWith("# ")) {
+        if (line.startsWith("# ")) {
           return (
             <h2
               key={i}
               className="font-display font-bold text-[#a0802a] text-md mt-8 mb-2"
             >
-              {block.replace(/^# /, "")}
+              {line.replace(/^# /, "")}
             </h2>
           );
+        }
+        if (line.trim() === "") {
+          return <div key={i} className="h-4" />;
         }
         return (
           <p
             key={i}
             className="text-sm md:text-base text-gray-700 leading-relaxed"
           >
-            {block.trim()}
+            {line}
           </p>
         );
       })}
