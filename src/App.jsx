@@ -12,11 +12,15 @@ import ContactPage from "./pages/ContactPage";
 import CoachingPage from "./pages/CoachingPage";
 import ContactCoachingPage from "./pages/ContactCoachingPage";
 
+import ConfirmLetter from "./components/ConfirmLetter";
+
 //--------------------------------------------------
 // Admin
 import Adminhome from "./components/admin/Adminhome";
 import AdminpostUpload from "./components/admin/AdminpostUpload";
 import Admineditposts from "./components/admin/Admineditposts";
+import Adminnewsletter from "./components/admin/Adminnewsletter";
+import AdminGate from "./components/admin/AdminGate";
 
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------
@@ -57,16 +61,40 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "/confirm",
+    element: <ConfirmLetter />,
+  },
+  {
     path: "/admin",
-    element: <Adminhome />,
+    element: (
+      <AdminGate>
+        <Adminhome />
+      </AdminGate>
+    ),
   },
   {
     path: "/admin/new",
-    element: <AdminpostUpload />,
+    element: (
+      <AdminGate>
+        <AdminpostUpload />
+      </AdminGate>
+    ),
   },
   {
     path: "/admin/edit",
-    element: <Admineditposts />,
+    element: (
+      <AdminGate>
+        <Admineditposts />
+      </AdminGate>
+    ),
+  },
+  {
+    path: "/admin/newsletter",
+    element: (
+      <AdminGate>
+        <Adminnewsletter />
+      </AdminGate>
+    ),
   },
 ]);
 //------------------------------------------------------------------

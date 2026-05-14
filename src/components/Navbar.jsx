@@ -41,7 +41,7 @@ export default function Navbar() {
             to={"/"}
             className="logo relative md:text-[2rem] text-2xl font-display font-bold text-gray-900 tracking-wide"
           >
-            Változó Kor
+            Változókor
           </Link>
 
           {/* Desktop Nav */}

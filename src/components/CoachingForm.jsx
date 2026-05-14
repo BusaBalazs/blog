@@ -3,9 +3,9 @@ import { useLocation } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 
 // ── EmailJS konfig ───────────────────────────
-const EMAILJS_SERVICE_ID = "service_iv5wxff";
-const EMAILJS_TEMPLATE_ID = "template_w54sj1f";
-const EMAILJS_PUBLIC_KEY = "0ayuxbX1_0toL3p-i";
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 // ── Segéd komponensek ─────────────────────────────────────
 function Label({ htmlFor, children, required }) {
