@@ -1,34 +1,14 @@
 import React from "react";
 import { Play } from "lucide-react";
+import { usePosts } from "../data/Postcontext";
 
 const getYouTubeEmbedUrl = (url) => {
   if (!url) return null;
-  const regex = /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
+  const regex =
+    /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
   const match = url.match(regex);
   return match ? `https://www.youtube.com/embed/${match[1]}` : null;
 };
-
-// ---------- MOCK DATA (replace with Firebase) ----------
-const MOCK_VIDEOS = [
-  {
-    id: "v1",
-    category: "Életmód",
-    date: "2026. 04. 26.",
-    title: "Lorem ipsum dolores",
-    thumbnailUrl:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80",
-    videoUrl: "https://www.youtube.com/watch?v=LQUXuQ6Zd9w",
-  },
-  {
-    id: "v2",
-    category: "Életmód",
-    date: "2026. 04. 26.",
-    title: "Lorem ipsum dolores",
-    thumbnailUrl:
-      "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=600&q=80",
-    videoUrl: "https://www.youtube.com/watch?v=2KPEHohJMuw",
-  },
-];
 
 // ---------- Sub-components ----------
 function VideoCard({ video }) {
@@ -74,17 +54,24 @@ function VideoCard({ video }) {
   );
 }
 
+// ---------- Skeleton ----------
+function VideoSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <div className="aspect-[16/9] w-full bg-gray-200 rounded-sm mb-3" />
+      <div className="h-3 bg-gray-200 rounded w-1/3 mb-2" />
+      <div className="h-4 bg-gray-200 rounded w-2/3" />
+    </div>
+  );
+}
+
 //--------------------------------------------------------
-//--------------------------------------------------------
-const Videos = ({ videos = MOCK_VIDEOS }) => {
-  /**
-   * Firebase integration:
-   * Replace MOCK_VIDEOS with Firestore fetch from "videos" collection
-   */
+const Videos = () => {
+  const { videos, loading } = usePosts();
 
   return (
-    <section className="bg-gray-50  px-4 sm:px-6 lg:px-8 pb-4">
-      <div className="max-w-[1200px]  mx-auto">
+    <section className="bg-gray-50 px-4 sm:px-6 lg:px-8 pb-4">
+      <div className="max-w-[1200px] mx-auto">
         {/* Section header */}
         <div className="inline-block mb-8">
           <h2 className="font-display text-2xl font-bold bg-gold px-2 py-4">
@@ -92,51 +79,66 @@ const Videos = ({ videos = MOCK_VIDEOS }) => {
           </h2>
         </div>
 
-        {/* Vertical gold separator line — desktop only */}
+        {/* Desktop: 2 oszlopos, arany elválasztóval */}
         <div className="hidden md:block relative">
-          {/* Center divider line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-[2px] bg-[#ede56b] -translate-x-1/2 z-10" />
-
+          {videos.length > 0 && (
+            <div className="absolute left-1/2 top-0 bottom-0 w-[2px] bg-[#ede56b] -translate-x-1/2 z-10" />
+          )}
           <div className="grid grid-cols-2 gap-10">
-            {videos.map((video) => (
-              <VideoCard key={video.id} video={video} />
-            ))}
+            {loading ? (
+              [0, 1].map((i) => <VideoSkeleton key={i} />)
+            ) : videos.length > 0 ? (
+              videos.map((video) => <VideoCard key={video.id} video={video} />)
+            ) : (
+              <p className="text-sm text-gray-500 col-span-2 py-8 text-center font-bold">
+                Még nincsenek videók.
+              </p>
+            )}
           </div>
         </div>
 
         {/* Mobile: stacked */}
         <div className="md:hidden flex flex-col gap-8">
-          {videos.map((video) => (
-            <VideoCard key={video.id} video={video} />
-          ))}
+          {loading ? (
+            [0, 1].map((i) => <VideoSkeleton key={i} />)
+          ) : videos.length > 0 ? (
+            videos.map((video) => <VideoCard key={video.id} video={video} />)
+          ) : (
+            <p className="text-sm text-gray-500 py-8 text-center font-bold">
+              Még nincsenek videók.
+            </p>
+          )}
         </div>
 
-        {/* "All videos" link */}
-        <div className="flex justify-end mt-8">
-          <a
-            href="https://www.youtube.com/"
-            target="_blank"
-            className="flex items-center gap-2 text-sm text-gray-700 hover:text-[#b8963e] font-medium transition-colors group"
-          >
-            Összes Videó
-            <span className="inline-block w-16 h-px bg-[#bda972] group-hover:w-20 transition-all duration-300" />
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              className="text-[#bda972]"
+        {/* "Összes videó" link */}
+        {videos.length > 0 && (
+          <div className="flex justify-end mt-8">
+            <a
+              href="https://www.youtube.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-gray-700 hover:text-[#b8963e] font-medium transition-colors group"
             >
-              <path
-                d="M3 8h10M9 4l4 4-4 4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </a>
-        </div>
+              Összes Videó
+              <span className="inline-block w-16 h-px bg-[#bda972] group-hover:w-20 transition-all duration-300" />
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                className="text-[#bda972]"
+              >
+                <path
+                  d="M3 8h10M9 4l4 4-4 4"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </a>
+          </div>
+        )}
       </div>
     </section>
   );
