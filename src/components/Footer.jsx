@@ -1,3 +1,7 @@
+import React from "react";
+import { Link } from "react-router-dom";
+
+//-----------------------------------------------------
 // Simple SVG social icons to avoid installing an extra package
 function FacebookIcon() {
   return (
@@ -6,7 +10,6 @@ function FacebookIcon() {
     </svg>
   );
 }
-
 
 function InstagramIcon() {
   return (
@@ -81,12 +84,12 @@ export default function Footer() {
 
             {/* Legal link */}
             <div>
-              <a
-                href="#"
+              <Link
+                to="/rules"
                 className="text-xs text-gray-300 hover:text-white transition-colors underline underline-offset-2"
               >
                 Adatkezelési tájékoztató
-              </a>
+              </Link>
             </div>
           </div>
         </div>
