@@ -216,7 +216,7 @@ function buildEmailHtml({ subject, preheader, featured, post1, post2, customText
             <td>
               <a href="${siteUrl}/article/${featured.id}">
                 <img src="${featured.imageUrl || ""}" alt="${featured.title}"
-                  style="width:100%;object-fit:cover;display:block; aspect-ratio:510/390;"/>
+                  style="width:100%;height:340px;object-fit:cover;display:block;"/>
               </a>
             </td>
           </tr>
