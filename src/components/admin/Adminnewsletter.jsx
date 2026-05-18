@@ -216,7 +216,7 @@ function buildEmailHtml({ subject, preheader, featured, post1, post2, customText
             <td>
               <a href="${siteUrl}/article/${featured.id}">
                 <img src="${featured.imageUrl || ""}" alt="${featured.title}"
-                  width="600" style="width:100%;height:280px;object-fit:cover;display:block;"/>
+                  style="width:100%;object-fit:cover;display:block; aspect-ratio:510/390;"/>
               </a>
             </td>
           </tr>
@@ -586,15 +586,6 @@ export default function AdminNewsletter() {
                   posts={posts}
                 />
               </div>
-            </div>
-
-            {/* .env info */}
-            <div className="bg-gray-800 rounded-sm p-4 text-xs text-gray-400 space-y-1">
-              <p className="text-gray-300 font-semibold mb-2">Szükséges .env változók:</p>
-              <p><span className="text-green-400">VITE_BREVO_API_KEY</span> — Brevo API kulcs</p>
-              <p><span className="text-green-400">VITE_BREVO_LIST_ID</span> — Feliratkozók lista ID</p>
-              <p><span className="text-green-400">VITE_BREVO_SENDER_EMAIL</span> — Küldő email cím</p>
-              <p><span className="text-green-400">VITE_SITE_URL</span> — pl. https://valtozakor.hu</p>
             </div>
 
             {/* Gombok */}

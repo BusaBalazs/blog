@@ -855,6 +855,8 @@ function SearchBar({ search, onSearch, categoryFilter, onCategoryFilter }) {
 }
 
 //------------------------------------------------------------
+//------------------------------------------------------------
+//------------------------------------------------------------
 const Admineditposts = () => {
   const { posts, videos, loading, error } = usePosts();
 
@@ -912,10 +914,10 @@ const Admineditposts = () => {
             + Új tartalom
           </a>
           <a
-            href="/"
+            href="/admin"
             className="text-xs text-gray-500 hover:text-[#b8963e] transition-colors underline underline-offset-2"
           >
-            ← Főoldal
+            ← Admin Főoldal
           </a>
         </div>
       </header>
