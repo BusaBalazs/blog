@@ -13,7 +13,7 @@ import CoachingPage from "./pages/CoachingPage";
 import ContactCoachingPage from "./pages/ContactCoachingPage";
 
 import ConfirmLetter from "./components/ConfirmLetter";
-import Gdpr from "./components/Gdpr";
+import Privacypolicy from "./components/Privacypolicy";
 
 //--------------------------------------------------
 // Admin
@@ -61,7 +61,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/rules",
-        element: <Gdpr />,
+        element: <Privacypolicy />,
       },
     ],
   },
