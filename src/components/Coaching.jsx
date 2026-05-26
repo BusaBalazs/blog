@@ -286,7 +286,7 @@ const Coaching = () => {
           <p className="text-center text-m text-gray-800 mb-8">
             Mindkét csomag előtt ingyenes, 30 perces bemutatkozó beszélgetés.{" "}
             <Link
-              to="/kapcsolat"
+              to="/contactCoaching"
               className="text-[#b8963e] underline underline-offset-2 hover:text-[#d4af37]"
             >
               Foglalj időpontot →

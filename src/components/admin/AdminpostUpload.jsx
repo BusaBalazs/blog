@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../data/firebase";
-import { slugify } from "../../data/Postcontext";
 import Imageuploader from "./Imageuploader";
 
 const EMPTY_FORM = {
@@ -19,6 +18,19 @@ const EMPTY_VIDEO_FORM = {
   date: new Date().toISOString().split("T")[0],
   title: "",
   videoUrl: "",
+};
+
+const getYoutubeId = (url) => {
+  if (!url?.trim()) return null;
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+    /youtube\.com\/shorts\/([^&\n?#]+)/,
+  ];
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
 };
 
 function Label({ htmlFor, children, required }) {
@@ -162,17 +174,6 @@ function PreviewCard({ form }) {
 
 function YoutubePreview({ url }) {
   if (!url?.trim()) return null;
-  const getYoutubeId = (url) => {
-    const patterns = [
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
-      /youtube\.com\/shorts\/([^&\n?#]+)/,
-    ];
-    for (const pattern of patterns) {
-      const match = url.match(pattern);
-      if (match) return match[1];
-    }
-    return null;
-  };
   const videoId = getYoutubeId(url);
   if (!videoId)
     return (
