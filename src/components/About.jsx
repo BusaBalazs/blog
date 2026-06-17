@@ -216,7 +216,7 @@ const About = () => {
       </section>
 
       {/* ── COACHING CTA ── */}
-      <section className="bg-[#f0efed] pb-16 md:pb-24 px-6 lg:px-8">
+      {/* <section className="bg-[#f0efed] pb-16 md:pb-24 px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="relative bg-[#3a3a3a] rounded-sm overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#b8963e] via-[#f0d060] to-[#b8963e]" />
@@ -264,7 +264,8 @@ const About = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
+      
     </div>
   );
 };

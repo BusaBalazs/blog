@@ -5,16 +5,6 @@ import { db, storage } from "../../data/firebase";
 import { slugify, usePosts } from "../../data/Postcontext";
 import Imageuploader from "./Imageuploader";
 
-// ── Konstansok ────────────────────────────────────────────
-const CATEGORIES = [
-  "Életmód",
-  "Egészség",
-  "Kapcsolatok",
-  "Szépség",
-  "Pszichológia",
-  "Karrier",
-];
-
 // ── Segéd komponensek ─────────────────────────────────────
 function Label({ htmlFor, children, required }) {
   return (
@@ -406,20 +396,13 @@ function EditPanel({ post, onSaved, onDeleted }) {
               <Label htmlFor="edit-category" required>
                 Kategória
               </Label>
-              <select
+              <Input
                 id="edit-category"
+                type="text"
                 value={form.category}
                 onChange={set("category")}
-                className="w-full bg-white border border-gray-200 rounded-sm px-4 py-2.5 text-sm text-gray-800
-                  focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/30 transition-all"
-              >
-                <option value="">Válassz...</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+                placeholder="Írd be a kategóriát"
+              />
               <FieldError msg={errors.category} />
             </div>
             <div>
@@ -700,20 +683,13 @@ function VideoEditPanel({ video, onSaved, onDeleted }) {
               <Label htmlFor="vid-category" required>
                 Kategória
               </Label>
-              <select
+              <Input
                 id="vid-category"
+                type="text"
                 value={form.category}
                 onChange={set("category")}
-                className="w-full bg-white border border-gray-200 rounded-sm px-4 py-2.5 text-sm text-gray-800
-                  focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/30 transition-all"
-              >
-                <option value="">Válassz...</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+                placeholder="Írd be a kategóriát"
+              />
               <FieldError msg={errors.category} />
             </div>
             <div>
@@ -826,7 +802,7 @@ function VideoEditPanel({ video, onSaved, onDeleted }) {
 }
 
 // ── Keresés / szűrő sáv ───────────────────────────────────
-function SearchBar({ search, onSearch, categoryFilter, onCategoryFilter }) {
+function SearchBar({ search, onSearch, categoryFilter, onCategoryFilter, categories = [] }) {
   return (
     <div className="flex flex-col sm:flex-row gap-3 mb-4">
       <input
@@ -844,7 +820,7 @@ function SearchBar({ search, onSearch, categoryFilter, onCategoryFilter }) {
           focus:outline-none focus:border-[#d4af37] transition-all"
       >
         <option value="">Minden kategória</option>
-        {CATEGORIES.map((c) => (
+        {categories.map((c) => (
           <option key={c} value={c}>
             {c}
           </option>
@@ -858,7 +834,7 @@ function SearchBar({ search, onSearch, categoryFilter, onCategoryFilter }) {
 //------------------------------------------------------------
 //------------------------------------------------------------
 const Admineditposts = () => {
-  const { posts, videos, loading, error } = usePosts();
+  const { posts, videos, loading, error, categories } = usePosts();
 
   // ── Fő tab: cikkek vagy videók ────────────────────────
   const [mainTab, setMainTab] = useState("posts"); // "posts" | "videos"
@@ -953,6 +929,7 @@ const Admineditposts = () => {
                 onSearch={setSearch}
                 categoryFilter={categoryFilter}
                 onCategoryFilter={setCategoryFilter}
+                categories={categories}
               />
 
               <p className="text-xs text-gray-400 mb-3">

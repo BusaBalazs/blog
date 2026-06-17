@@ -10,7 +10,7 @@ const NAV_ITEMS = [
     label: "Bejegyzések",
     hasDropdown: true,
   },
-  { label: "Coaching", href: "/coaching" },
+  // { label: "Coaching", href: "/coaching" },
   { label: "Bemutatkozás", href: "/about" },
 ];
 
