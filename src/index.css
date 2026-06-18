@@ -75,7 +75,7 @@ body::before {
   opacity: .5;
   left: calc(50% - 70px);
   border-radius: 25px;
-  background-color: #bda972;
+  background-color: #fdd904;
 }
 
 @media (max-width: 767px) {

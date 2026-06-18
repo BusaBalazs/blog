@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import profil from "../assets/profil_pic.webp";
 //---------------------------------------------------------
 const TOPICS = [
   {
@@ -39,61 +39,67 @@ const About = () => {
   return (
     <div className="font-body bg-[#f0efed] overflow-x-hidden">
       {/* ── HERO ── */}
-      <section className="relative md:min-h-[60vh] min-h-[30vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#f5f2ed] via-[#f0efed] to-[#ede8e0]" />
+      <section className="relative md:min-h-[60vh] min-h-[30vh]  overflow-hidden">
         <div className="md:block hidden absolute right-16 top-1/2 -translate-y-1/2 font-display text-[20vw] font-bold text-[#d4af37]/15 leading-none select-none pointer-events-none tracking-tighter">
           VK
         </div>
-
-        <div className="relative max-w-6xl mx-auto px-6 lg:px-8 py-20 w-full">
-          <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#b8963e] mb-6">
-              Bemutatkozás
-            </p>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-[1.1] mb-6">
-              Farkas
-              <br />
-              <span className="text-[#b8963e]">Emese</span>
-            </h1>
-            <div className="flex items-center gap-3 mb-8">
-              <div className="h-px w-10 bg-[#d4af37]" />
-              <p className="text-sm text-gray-500 tracking-wide">
-                Kommunikációs szakember · Life coach · Szociológus
+        <div className="flex md:flex-row flex-col items-center mx-auto max-w-6xl px-6">
+          <div className="relative  px-6 lg:px-8 py-20 w-full">
+            <div className="max-w-3xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#b8963e] mb-6">
+                Bemutatkozás
               </p>
-            </div>
-            <p className="text-base md:text-lg text-gray-600 leading-relaxed max-w-xl mb-10">
-              30 éve dolgozom kommunikációs területen. Amikor beléptem a
-              változókorba, rájöttem: rengeteg ember érzi úgy, hogy{" "}
-              <strong className="text-gray-800 font-semibold">
-                egyedül maradt a kérdéseivel.
-              </strong>{" "}
-              Azóta elköteleztem magam amellett, hogy erről hangosan, őszintén
-              és pozitívan beszéljek.
-            </p>
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-3 bg-[#d4af37] hover:bg-[#b8963e]
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-[1.1] mb-6">
+                Farkas
+                <br />
+                <span className="text-[#b8963e]">Emese</span>
+              </h1>
+              <div className="flex items-center gap-3 mb-8">
+                <div className="h-px w-10 bg-[#d4af37]" />
+                <p className="text-sm text-gray-500 tracking-wide">
+                  Kommunikációs szakember · Life coach · Szociológus
+                </p>
+              </div>
+              <p className="text-base md:text-lg text-gray-600 leading-relaxed max-w-xl mb-10">
+                30 éve dolgozom kommunikációs területen. Amikor beléptem a
+                változókorba, rájöttem: rengeteg ember érzi úgy, hogy{" "}
+                <strong className="text-gray-800 font-semibold">
+                  egyedül maradt a kérdéseivel.
+                </strong>{" "}
+                Azóta elköteleztem magam amellett, hogy erről hangosan, őszintén
+                és pozitívan beszéljek.
+              </p>
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-3 bg-[#d4af37] hover:bg-[#b8963e]
                 text-white font-semibold text-sm px-7 py-3.5 transition-all duration-200
                 rounded-sm group shadow-lg shadow-[#d4af37]/20"
-            >
-              Vedd fel velem a kapcsolatot
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                className="group-hover:translate-x-1 transition-transform duration-200"
               >
-                <path
-                  d="M3 8h10M9 4l4 4-4 4"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </Link>
+                Vedd fel velem a kapcsolatot
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  className="group-hover:translate-x-1 transition-transform duration-200"
+                >
+                  <path
+                    d="M3 8h10M9 4l4 4-4 4"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </Link>
+            </div>
           </div>
+
+          <img
+            src={profil}
+            alt="Farkas Emese"
+            className="relative w-[400px] h-[400px] rounded-xl mb-4 object-cover border-2 border-[#d4af37] shadow-lg shadow-[#d4af37]/20"
+          />
         </div>
       </section>
 
@@ -265,7 +271,6 @@ const About = () => {
           </div>
         </div>
       </section> */}
-      
     </div>
   );
 };
