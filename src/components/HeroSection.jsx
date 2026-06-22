@@ -126,7 +126,7 @@ const HeroSection = () => {
             to="/about"
             className="flex items-center gap-2 text-m text-gray-700 hover:text-[#b8963e] font-medium transition-colors group"
           >
-            Tudjon meg többet rólunk
+            Tudjon meg többet rólam
             <span className="inline-block w-16 h-px bg-[#bda972] group-hover:w-20 transition-all duration-300" />
             <svg
               width="16"

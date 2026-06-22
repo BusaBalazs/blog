@@ -75,7 +75,7 @@ export default function Footer() {
             <div className="text-center">
               {/* Logo */}
               <p className="logo relative md:text-[2rem] text-2xl font-display font-bold text-gray-50 tracking-wide">
-                Változó Kor
+                Változókor
               </p>
               <p className="text-xs text-gray-400 mt-2">
                 2026 Minden jog fenntartva

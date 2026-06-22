@@ -39,9 +39,9 @@ const About = () => {
   return (
     <div className="font-body bg-[#f0efed] overflow-x-hidden">
       {/* ── HERO ── */}
-      <section className="relative md:min-h-[60vh] min-h-[30vh]  overflow-hidden">
-        <div className="md:block hidden absolute right-16 top-1/2 -translate-y-1/2 font-display text-[20vw] font-bold text-[#d4af37]/15 leading-none select-none pointer-events-none tracking-tighter">
-          VK
+      <section className="relative md:min-h-[50vh] min-h-[30vh]  overflow-hidden">
+        <div className="md:block hidden absolute right-16 top-1/2 -translate-y-1/2 font-display text-[20vw] font-bold text-[#d4af37]/5 leading-none select-none pointer-events-none tracking-tighter">
+          Változókor
         </div>
         <div className="flex md:flex-row flex-col items-center mx-auto max-w-6xl px-6">
           <div className="relative  px-6 lg:px-8 py-20 w-full">
@@ -61,13 +61,12 @@ const About = () => {
                 </p>
               </div>
               <p className="text-base md:text-lg text-gray-600 leading-relaxed max-w-xl mb-10">
-                30 éve dolgozom kommunikációs területen. Amikor beléptem a
-                változókorba, rájöttem: rengeteg ember érzi úgy, hogy{" "}
+                30 éve dolgozom kommunikációs területen. Az évek során
+                megtanultam, hogy a legfontosabb kérdéseinkre sokszor nem a kész
+                válaszok,{" "}
                 <strong className="text-gray-800 font-semibold">
-                  egyedül maradt a kérdéseivel.
+                  hanem az őszinte beszélgetések vezetnek el.
                 </strong>{" "}
-                Azóta elköteleztem magam amellett, hogy erről hangosan, őszintén
-                és pozitívan beszéljek.
               </p>
               <Link
                 to="/contact"
@@ -118,7 +117,7 @@ const About = () => {
       {/* ── A TÖRTÉNET ── */}
       <section className="bg-white">
         <div className="max-w-6xl mx-auto px-6 lg:px-8 py-16 md:py-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Bal: sticky fejléc */}
             <div className="lg:sticky lg:top-24">
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#b8963e] mb-4">
@@ -132,16 +131,66 @@ const About = () => {
               </h2>
               <div className="w-10 h-0.5 bg-[#d4af37] mb-6" />
               <p className="text-base text-gray-500 leading-relaxed">
-                Amikor beléptem a változókorba, tünetek listáit és
-                termékajánlókat találtam. Arról viszont alig volt szó, hogy{" "}
+                Amikor beléptem a változókorba, rájöttem: rengeteg nő és férfi
+                érzi úgy, hogy egyedül maradt a kérdéseivel, a
+                bizonytalanságával, a testi-lelki változásokkal. Pedig ez az
+                életszakasz nem a lezárásról, hanem{" "}
                 <strong className="text-gray-700">
-                  mi nyílik meg előttem.
+                  egy új fejezet kezdetéről szólhat.
+                </strong>
+              </p>
+              <p className="text-base text-gray-500 leading-relaxed my-4">
+                Ezért hoztam létre a valtozokor.hu oldalt.
+              </p>
+              <p className="text-base text-gray-500 leading-relaxed">
+                A célom nem csupán az, hogy információt adjak, hanem hogy
+                közösséget építsünk. Egy olyan támogató közösséget, ahol{" "}
+                <strong className="text-gray-700">
+                  nyíltan lehet beszélni a változókorról,
+                </strong>{" "}
+                az életközepi kihívásokról, az üres fészek időszakáról, a
+                párkapcsolati változásokról, az újrakezdésről és mindarról,
+                amivel 50 év felett találkozhatunk.
+              </p>
+              <p className="text-base text-gray-500 leading-relaxed my-4">
+                Hiszem, hogy könnyebb végigmenni ezen az úton, ha tudjuk:{" "}
+                <strong className="text-gray-700">nem vagyunk egyedül.</strong>
+              </p>
+              <p className="text-base text-gray-500 leading-relaxed my-4">
+                Arra hívlak, hogy csatlakozz hozzánk!{" "}
+                <strong className="text-gray-700">
+                  Kövesd a Változókor podcast beszélgetéseit,
+                </strong>{" "}
+                ahol szakértőkkel, ismert emberekkel és hétköznapi hősökkel
+                beszélgetünk tabuk nélkül az élet második feléről.{" "}
+                <strong className="text-gray-700">
+                  Iratkozz fel a hírlevélre,
+                </strong>{" "}
+                hogy ne maradj le az új tartalmakról, közös programokról,
+                találkozókról és kezdeményezésekről.
+              </p>
+              <p className="text-base text-gray-500 leading-relaxed my-4">
+                És ami talán a legfontosabb:{" "}
+                <strong className="text-gray-700">
+                  írd meg a saját történetedet, kérdéseidet, dilemmáidat!
+                </strong>{" "}
+                Mondd el, mi foglalkoztat, milyen témákról szeretnél többet
+                hallani. A beérkező kérdésekből blogbejegyzések,
+                podcast-beszélgetések és közösségi programok születhetnek, hogy
+                együtt találjunk válaszokat azokra a kérdésekre, amelyek
+                sokunkat érintenek.
+              </p>
+              <p className="text-base text-gray-500 leading-relaxed my-4">
+                Fogjunk össze, beszéljünk róla nyíltan, és mutassuk meg, hogy a
+                változókor nem a vég kezdete, hanem egy{" "}
+                <strong className="text-gray-700">
+                  új életszakasz lehetőségekkel teli nyitánya.
                 </strong>
               </p>
             </div>
 
             {/* Jobb: kártyák */}
-            <div className="space-y-4">
+            <div className="lg:space-y-16 space-y-4">
               {[
                 {
                   n: "01",

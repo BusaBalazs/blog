@@ -326,7 +326,7 @@ const PrivacyPolicy = () => {
           </h1>
           <div className="w-10 h-0.5 bg-[#d4af37] mb-6" />
           <p className="text-base text-gray-500 leading-relaxed max-w-2xl">
-            A <strong className="text-gray-700">valtozakor.hu</strong> weboldal
+            A <strong className="text-gray-700">valtozokor.hu</strong> weboldal
             üzemeltetője elkötelezett a látogatók és felhasználók személyes
             adatainak védelme iránt. Ez a tájékoztató ismerteti, hogy milyen
             adatokat gyűjtünk, miért, és hogyan kezeljük azokat — összhangban az
@@ -403,7 +403,7 @@ const PrivacyPolicy = () => {
               className="inline-flex items-center gap-2 bg-[#d4af37] hover:bg-[#b8963e]
                 text-white font-semibold text-sm px-6 py-3 rounded-sm transition-colors duration-200"
             >
-              info@valtozakor.hu
+              info@valtozokor.hu
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                 <path
                   d="M3 8h10M9 4l4 4-4 4"
