@@ -4,6 +4,7 @@ import { ref, deleteObject } from "firebase/storage";
 import { db, storage } from "../../data/firebase";
 import { slugify, usePosts } from "../../data/Postcontext";
 import Imageuploader from "./Imageuploader";
+import { getYouTubeEmbedUrl, getYouTubeThumbnailUrl, isYouTubeUrl } from "../utility/youtube";
 
 // ── Segéd komponensek ─────────────────────────────────────
 function Label({ htmlFor, children, required }) {
@@ -146,7 +147,7 @@ function validateVideo(form) {
   if (!form.category) errors.category = "Válassz kategóriát.";
   if (!form.videoUrl?.trim()) {
     errors.videoUrl = "A YouTube link kötelező.";
-  } else if (!/youtube\.com|youtu\.be/.test(form.videoUrl)) {
+  } else if (!isYouTubeUrl(form.videoUrl)) {
     errors.videoUrl = "Érvényes YouTube URL-t adj meg.";
   }
   return errors;
@@ -201,16 +202,7 @@ function PostListItem({ post, isSelected, onClick }) {
 
 // ── Videó lista kártya ────────────────────────────────────
 function VideoListItem({ video, isSelected, onClick }) {
-  const getThumb = (url) => {
-    if (!url) return null;
-    const match = url.match(
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/,
-    );
-    return match
-      ? `https://img.youtube.com/vi/${match[1]}/mqdefault.jpg`
-      : null;
-  };
-  const thumb = getThumb(video.videoUrl);
+  const thumb = getYouTubeThumbnailUrl(video.videoUrl);
 
   return (
     <button
@@ -248,15 +240,13 @@ function VideoListItem({ video, isSelected, onClick }) {
 // ── YouTube előnézet ──────────────────────────────────────
 function YoutubePreview({ url }) {
   if (!url?.trim()) return null;
-  const match = url.match(
-    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/,
-  );
-  if (!match)
+  const embedUrl = getYouTubeEmbedUrl(url);
+  if (!embedUrl)
     return <p className="text-xs text-red-400 mt-2">Érvénytelen YouTube URL</p>;
   return (
     <div className="mt-3 rounded-sm overflow-hidden aspect-video bg-gray-900">
       <iframe
-        src={`https://www.youtube.com/embed/${match[1]}`}
+        src={embedUrl}
         title="Előnézet"
         className="w-full h-full"
         allowFullScreen

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../data/firebase";
 import Imageuploader from "./Imageuploader";
+import { getYouTubeEmbedUrl, getYouTubeVideoId, isYouTubeUrl } from "../utility/youtube";
 
 const EMPTY_FORM = {
   category: "",
@@ -20,18 +21,7 @@ const EMPTY_VIDEO_FORM = {
   videoUrl: "",
 };
 
-const getYoutubeId = (url) => {
-  if (!url?.trim()) return null;
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
-    /youtube\.com\/shorts\/([^&\n?#]+)/,
-  ];
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match) return match[1];
-  }
-  return null;
-};
+const getYoutubeId = (url) => getYouTubeVideoId(url);
 
 function Label({ htmlFor, children, required }) {
   return (
@@ -184,7 +174,7 @@ function YoutubePreview({ url }) {
   return (
     <div className="mt-3 rounded-sm overflow-hidden aspect-video bg-gray-900">
       <iframe
-        src={`https://www.youtube.com/embed/${videoId}`}
+        src={getYouTubeEmbedUrl(url)}
         title="YouTube videó előnézet"
         className="w-full h-full"
         allowFullScreen
@@ -209,7 +199,7 @@ function validateVideo(form) {
   if (!form.category) errors.category = "Válassz kategóriát.";
   if (!form.videoUrl.trim()) {
     errors.videoUrl = "A YouTube link kötelező.";
-  } else if (!/youtube\.com|youtu\.be/.test(form.videoUrl)) {
+  } else if (!isYouTubeUrl(form.videoUrl)) {
     errors.videoUrl = "Érvényes YouTube URL-t adj meg.";
   }
   return errors;

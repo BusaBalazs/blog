@@ -1,14 +1,7 @@
 import React from "react";
 import { Play } from "lucide-react";
 import { usePosts } from "../data/Postcontext";
-
-const getYouTubeEmbedUrl = (url) => {
-  if (!url) return null;
-  const regex =
-    /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
-  const match = url.match(regex);
-  return match ? `https://www.youtube.com/embed/${match[1]}` : null;
-};
+import { getYouTubeEmbedUrl } from "./utility/youtube";
 
 // ---------- Sub-components ----------
 function VideoCard({ video }) {
