@@ -107,7 +107,7 @@ const Videos = () => {
         {videos.length > 0 && (
           <div className="flex justify-end mt-8">
             <a
-              href="https://www.youtube.com/"
+              href="https://www.youtube.com/@V%C3%A1ltoz%C3%B3korpodcast"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-gray-700 hover:text-[#b8963e] font-medium transition-colors group"
